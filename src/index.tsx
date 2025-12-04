@@ -6,7 +6,6 @@ import {
   NATIONALITIES, 
   RELIGIONS, 
   SUPPLIES, 
-  INFLATION_RATES, 
   TRAIL_STOPS,
   RANDOM_EVENTS,
   HUNTING_RESULTS,
@@ -14,7 +13,14 @@ import {
   ENEMIES,
   STATUS_EFFECTS,
   SKILLS,
-  VP_REWARDS
+  VP_REWARDS,
+  TRADING_POSTS,
+  TREASURES,
+  TESLA_GUN_RESULTS,
+  HEALTH_LEVELS,
+  FUND_LEVELS,
+  WAGON_PROBLEMS,
+  FIGHT_LEVELS
 } from './data/gameData'
 
 // Types
@@ -136,8 +142,8 @@ app.get('/', (c) => {
                 <i class="fas fa-store text-yellow-600 text-xl"></i>
               </div>
               <div>
-                <h3 class="font-bold text-gray-800">General Store</h3>
-                <p class="text-sm text-gray-500">Supplies & pricing</p>
+                <h3 class="font-bold text-gray-800">Supply Market</h3>
+                <p class="text-sm text-gray-500">Independence prices</p>
               </div>
             </div>
           </a>
@@ -150,6 +156,57 @@ app.get('/', (c) => {
               <div>
                 <h3 class="font-bold text-gray-800">Dice Roller</h3>
                 <p class="text-sm text-gray-500">Events, hunting, combat</p>
+              </div>
+            </div>
+          </a>
+        </div>
+
+        {/* Second Row */}
+        <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+          <a href="/trading-posts" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-purple-600">
+            <div class="flex items-center gap-4">
+              <div class="bg-purple-100 p-3 rounded-lg">
+                <i class="fas fa-campground text-purple-600 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-800">Trading Posts</h3>
+                <p class="text-sm text-gray-500">Forts & villages</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="/combat" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-red-800">
+            <div class="flex items-center gap-4">
+              <div class="bg-red-100 p-3 rounded-lg">
+                <i class="fas fa-fist-raised text-red-800 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-800">Combat Arena</h3>
+                <p class="text-sm text-gray-500">Enemies & battles</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="/travel" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-teal-600">
+            <div class="flex items-center gap-4">
+              <div class="bg-teal-100 p-3 rounded-lg">
+                <i class="fas fa-route text-teal-600 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-800">Travel Calculator</h3>
+                <p class="text-sm text-gray-500">Distance & time</p>
+              </div>
+            </div>
+          </a>
+
+          <a href="/victory" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-amber-600">
+            <div class="flex items-center gap-4">
+              <div class="bg-amber-100 p-3 rounded-lg">
+                <i class="fas fa-trophy text-amber-600 text-xl"></i>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-800">Victory Points</h3>
+                <p class="text-sm text-gray-500">Calculate final score</p>
               </div>
             </div>
           </a>
@@ -208,6 +265,7 @@ app.get('/', (c) => {
                     stop.type === 'start' ? 'bg-green-600' :
                     stop.type === 'end' ? 'bg-red-600' :
                     stop.type === 'fort' ? 'bg-blue-600' :
+                    stop.type === 'village' ? 'bg-purple-600' :
                     'bg-yellow-600'
                   }`}>
                     {index + 1}
@@ -340,6 +398,36 @@ app.get('/characters', (c) => {
       </header>
 
       <main class="max-w-7xl mx-auto p-8">
+        {/* Health & Fund Reference */}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <i class="fas fa-heart text-red-600"></i> Health Levels
+            </h3>
+            <div class="grid grid-cols-2 gap-2">
+              {Object.entries(HEALTH_LEVELS).map(([level, hp]) => (
+                <div class="flex justify-between p-2 bg-gray-50 rounded">
+                  <span class="text-sm">{level}</span>
+                  <span class="font-bold text-red-600">{hp} HP</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <i class="fas fa-coins text-yellow-600"></i> Fund Levels
+            </h3>
+            <div class="grid grid-cols-2 gap-2">
+              {Object.entries(FUND_LEVELS).map(([level, amount]) => (
+                <div class="flex justify-between p-2 bg-gray-50 rounded">
+                  <span class="text-sm">{level}</span>
+                  <span class="font-bold text-green-600">${amount}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
         {/* Job Classes */}
         <div class="mb-8">
           <div class="flex items-center justify-between mb-4">
@@ -351,12 +439,13 @@ app.get('/characters', (c) => {
             </button>
           </div>
           
-          {/* Level 1 - Working Class */}
+          {/* Level 1 - Hard Mode */}
           <div class="bg-amber-50 rounded-xl p-6 mb-4 border-2 border-amber-200">
-            <h3 class="text-lg font-bold text-amber-800 mb-4 flex items-center gap-2">
+            <h3 class="text-lg font-bold text-amber-800 mb-2 flex items-center gap-2">
               <span class="bg-amber-600 text-white px-2 py-1 rounded text-sm">Level 1</span>
               {JOB_CLASSES.level1.name}
             </h3>
+            <p class="text-sm text-amber-700 mb-4">{JOB_CLASSES.level1.description}</p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {JOB_CLASSES.level1.jobs.map(job => (
                 <div class="bg-white rounded-lg p-4 border hover:border-amber-400 transition cursor-pointer job-card" data-job={JSON.stringify(job)}>
@@ -380,12 +469,13 @@ app.get('/characters', (c) => {
             </div>
           </div>
 
-          {/* Level 2 - Middle Class */}
+          {/* Level 2 - Medium Mode */}
           <div class="bg-blue-50 rounded-xl p-6 mb-4 border-2 border-blue-200">
-            <h3 class="text-lg font-bold text-blue-800 mb-4 flex items-center gap-2">
+            <h3 class="text-lg font-bold text-blue-800 mb-2 flex items-center gap-2">
               <span class="bg-blue-600 text-white px-2 py-1 rounded text-sm">Level 2</span>
               {JOB_CLASSES.level2.name}
             </h3>
+            <p class="text-sm text-blue-700 mb-4">{JOB_CLASSES.level2.description}</p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {JOB_CLASSES.level2.jobs.map(job => (
                 <div class="bg-white rounded-lg p-4 border hover:border-blue-400 transition cursor-pointer job-card" data-job={JSON.stringify(job)}>
@@ -409,12 +499,13 @@ app.get('/characters', (c) => {
             </div>
           </div>
 
-          {/* Level 3 - Elite */}
+          {/* Level 3 - Easy Mode */}
           <div class="bg-purple-50 rounded-xl p-6 border-2 border-purple-200">
-            <h3 class="text-lg font-bold text-purple-800 mb-4 flex items-center gap-2">
+            <h3 class="text-lg font-bold text-purple-800 mb-2 flex items-center gap-2">
               <span class="bg-purple-600 text-white px-2 py-1 rounded text-sm">Level 3</span>
               {JOB_CLASSES.level3.name}
             </h3>
+            <p class="text-sm text-purple-700 mb-4">{JOB_CLASSES.level3.description}</p>
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
               {JOB_CLASSES.level3.jobs.map(job => (
                 <div class="bg-white rounded-lg p-4 border hover:border-purple-400 transition cursor-pointer job-card" data-job={JSON.stringify(job)}>
@@ -449,11 +540,15 @@ app.get('/characters', (c) => {
               <i class="fas fa-random mr-2"></i>Random
             </button>
           </div>
-          <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-3">
+          <div class="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-3">
             {NATIONALITIES.map(nat => (
               <div class="border rounded-lg p-3 hover:border-green-400 transition cursor-pointer nationality-card" data-nationality={JSON.stringify(nat)}>
-                <h4 class="font-medium text-gray-800 text-sm">{nat.name}</h4>
-                <p class="text-xs text-gray-500 mt-1">{nat.bonus}</p>
+                <h4 class="font-medium text-gray-800 text-sm mb-2">{nat.name}</h4>
+                <div class="flex flex-wrap gap-1">
+                  {nat.bonuses.map(bonus => (
+                    <span class="text-xs bg-green-100 text-green-700 px-2 py-0.5 rounded">{bonus}</span>
+                  ))}
+                </div>
               </div>
             ))}
           </div>
@@ -464,7 +559,7 @@ app.get('/characters', (c) => {
           <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <i class="fas fa-church text-purple-600"></i> Religions
           </h2>
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
             {RELIGIONS.map(rel => (
               <div class="border rounded-lg p-4 hover:border-purple-400 transition cursor-pointer">
                 <h4 class="font-medium text-gray-800">{rel.name}</h4>
@@ -496,7 +591,7 @@ app.get('/characters', (c) => {
   )
 })
 
-// General Store
+// Supply Market (Independence)
 app.get('/store', (c) => {
   return c.render(
     <div class="min-h-screen">
@@ -505,33 +600,37 @@ app.get('/store', (c) => {
           <a href="/" class="text-white/70 hover:text-white transition">
             <i class="fas fa-arrow-left"></i>
           </a>
-          <h1 class="text-2xl font-bold">General Store</h1>
+          <h1 class="text-2xl font-bold">Supply Market - Independence, MO</h1>
         </div>
       </header>
 
       <main class="max-w-7xl mx-auto p-8">
-        {/* Location & Inflation */}
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6">
-          <div class="flex items-center justify-between flex-wrap gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">
-                <i class="fas fa-map-marker-alt mr-2"></i>Current Location
-              </label>
-              <select id="location-select" class="px-4 py-2 border rounded-lg focus:ring-2 focus:ring-green-500">
-                {TRAIL_STOPS.map(stop => (
-                  <option value={stop.id}>{stop.name} (x{INFLATION_RATES[stop.id]})</option>
-                ))}
-              </select>
-            </div>
-            <div class="text-right">
-              <p class="text-sm text-gray-500">Price Multiplier</p>
-              <p id="inflation-display" class="text-3xl font-bold text-green-600">x1.0</p>
-            </div>
-          </div>
+        <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 mb-6">
+          <p class="text-yellow-800 font-medium">
+            <i class="fas fa-info-circle mr-2"></i>
+            Base prices at Independence. Each student starts with <strong>1 Conestoga Wagon</strong> and <strong>2 Oxen</strong> for FREE!
+          </p>
         </div>
 
-        {/* Supply Categories */}
         <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {/* Weapons */}
+          <div class="bg-white rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+              <i class="fas fa-crosshairs text-gray-600"></i> Weapons
+            </h3>
+            <div class="space-y-3">
+              {SUPPLIES.weapons.map(item => (
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <span class="font-medium">{item.name}</span>
+                    <p class="text-xs text-gray-500">{item.effect}</p>
+                  </div>
+                  <span class="font-bold text-green-600">${item.price}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+
           {/* Food */}
           <div class="bg-white rounded-xl shadow-lg p-6">
             <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
@@ -539,12 +638,12 @@ app.get('/store', (c) => {
             </h3>
             <div class="space-y-3">
               {SUPPLIES.food.map(item => (
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg supply-item" data-base-price={item.price}>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <span class="font-medium">{item.name}</span>
-                    {item.spoils && <span class="ml-2 text-xs text-red-500">(spoils)</span>}
+                    <p class="text-xs text-gray-500">{item.effect} (Stack: {item.stack})</p>
                   </div>
-                  <span class="font-bold text-green-600 item-price">${item.price}</span>
+                  <span class="font-bold text-green-600">${item.price}</span>
                 </div>
               ))}
             </div>
@@ -557,87 +656,165 @@ app.get('/store', (c) => {
             </h3>
             <div class="space-y-3">
               {SUPPLIES.health.map(item => (
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg supply-item" data-base-price={item.price}>
-                  <span class="font-medium">{item.name}</span>
-                  <span class="font-bold text-green-600 item-price">${item.price}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Weapons */}
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-crosshairs text-gray-600"></i> Weapons
-            </h3>
-            <div class="space-y-3">
-              {SUPPLIES.weapons.map(item => (
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg supply-item" data-base-price={item.price}>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <span class="font-medium">{item.name}</span>
-                    <span class="ml-2 text-xs text-blue-500">(+{item.modifier})</span>
-                    {item.powerful && <span class="ml-1 text-xs text-purple-500">⚡</span>}
+                    <p class="text-xs text-gray-500">{item.effect} (Stack: {item.stack})</p>
                   </div>
-                  <span class="font-bold text-green-600 item-price">${item.price}</span>
+                  <span class="font-bold text-green-600">${item.price}</span>
                 </div>
               ))}
             </div>
           </div>
 
-          {/* Tools */}
+          {/* Travel Aides */}
           <div class="bg-white rounded-xl shadow-lg p-6">
             <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-tools text-gray-600"></i> Tools
+              <i class="fas fa-tools text-gray-600"></i> Travel Aides
             </h3>
             <div class="space-y-3">
-              {SUPPLIES.tools.map(item => (
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg supply-item" data-base-price={item.price}>
-                  <span class="font-medium">{item.name}</span>
-                  <span class="font-bold text-green-600 item-price">${item.price}</span>
+              {SUPPLIES.travel.map(item => (
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
+                  <div>
+                    <span class="font-medium">{item.name}</span>
+                    <p class="text-xs text-gray-500">{item.effect}</p>
+                  </div>
+                  <span class={`font-bold ${item.price === 0 ? 'text-blue-600' : 'text-green-600'}`}>
+                    {item.price === 0 ? 'FREE' : `$${item.price}`}
+                  </span>
                 </div>
               ))}
             </div>
           </div>
 
           {/* Animals */}
-          <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="bg-white rounded-xl shadow-lg p-6 md:col-span-2">
             <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-horse text-brown-600"></i> Animals
+              <i class="fas fa-horse text-amber-600"></i> Animals & Party Members
             </h3>
-            <div class="space-y-3">
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
               {SUPPLIES.animals.map(item => (
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg supply-item" data-base-price={item.price}>
+                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
                   <div>
                     <span class="font-medium">{item.name}</span>
-                    <span class="block text-xs text-gray-500">{item.carrySlots} slots{item.notes ? ` • ${item.notes}` : ''}</span>
+                    <p class="text-xs text-gray-500">+{item.slots} carry slots. {item.effect}</p>
                   </div>
-                  <span class="font-bold text-green-600 item-price">${item.price}</span>
+                  <span class="font-bold text-green-600">${item.price}</span>
                 </div>
               ))}
-            </div>
-          </div>
-
-          {/* Trade Goods */}
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-gem text-purple-600"></i> Trade Goods
-            </h3>
-            <div class="space-y-3">
-              {SUPPLIES.trade_goods.map(item => (
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg supply-item" data-base-price={item.price}>
-                  <div>
-                    <span class="font-medium">{item.name}</span>
-                    {item.tradeValue && <span class="block text-xs text-purple-500">Trade value: ${item.tradeValue}</span>}
-                  </div>
-                  <span class="font-bold text-green-600 item-price">${item.price}</span>
+              <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                <div>
+                  <span class="font-medium">Spouse</span>
+                  <p class="text-xs text-gray-500">+100 VP at end (if living)</p>
                 </div>
-              ))}
+                <span class="font-bold text-green-600">--</span>
+              </div>
+              <div class="flex items-center justify-between p-3 bg-green-50 rounded-lg border border-green-200">
+                <div>
+                  <span class="font-medium">Child</span>
+                  <p class="text-xs text-gray-500">+50 VP at end (if living)</p>
+                </div>
+                <span class="font-bold text-green-600">--</span>
+              </div>
             </div>
           </div>
         </div>
       </main>
     </div>,
-    { title: 'General Store - Oregon Trail' }
+    { title: 'Supply Market - Oregon Trail' }
+  )
+})
+
+// Trading Posts
+app.get('/trading-posts', (c) => {
+  return c.render(
+    <div class="min-h-screen">
+      <header class="wagon-trail text-white py-4 px-8">
+        <div class="max-w-7xl mx-auto flex items-center gap-4">
+          <a href="/" class="text-white/70 hover:text-white transition">
+            <i class="fas fa-arrow-left"></i>
+          </a>
+          <h1 class="text-2xl font-bold">Trading Posts & Villages</h1>
+        </div>
+      </header>
+
+      <main class="max-w-7xl mx-auto p-8">
+        <div class="space-y-8">
+          {Object.entries(TRADING_POSTS).map(([key, post]) => (
+            <div class="bg-white rounded-xl shadow-lg overflow-hidden">
+              <div class={`p-4 text-white ${
+                key.includes('fort') ? 'bg-blue-700' : 
+                key.includes('shoshone') ? 'bg-purple-700' : 
+                key.includes('dalles') ? 'bg-teal-700' :
+                key.includes('whitman') ? 'bg-amber-700' :
+                'bg-green-700'
+              }`}>
+                <h3 class="text-xl font-bold">{post.name}</h3>
+              </div>
+              <div class="p-6">
+                {/* Items Table */}
+                <div class="mb-6">
+                  <h4 class="font-bold text-gray-800 mb-3">Available Items</h4>
+                  <div class="overflow-x-auto">
+                    <table class="w-full text-sm">
+                      <thead>
+                        <tr class="bg-gray-100">
+                          <th class="px-3 py-2 text-left">Item</th>
+                          <th class="px-3 py-2 text-left">Price</th>
+                          <th class="px-3 py-2 text-left">Amount</th>
+                          <th class="px-3 py-2 text-left">Effect</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {post.items.map(item => (
+                          <tr class="border-b">
+                            <td class="px-3 py-2 font-medium">{item.name}</td>
+                            <td class="px-3 py-2 text-green-600 font-bold">
+                              {item.price === 0 ? 'FREE' : `$${item.price}`}
+                            </td>
+                            <td class="px-3 py-2">
+                              <span class={typeof item.amount === 'string' && item.amount.includes('SOLD') ? 'text-red-600' : ''}>
+                                {item.amount}
+                              </span>
+                            </td>
+                            <td class="px-3 py-2 text-gray-500">{item.effect || '-'}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+
+                {/* Activities */}
+                {post.activities && post.activities.length > 0 && (
+                  <div>
+                    <h4 class="font-bold text-gray-800 mb-3">Possible Activities</h4>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-2">
+                      {post.activities.map(activity => (
+                        <li class="flex items-start gap-2 p-2 bg-gray-50 rounded">
+                          <i class="fas fa-chevron-right text-gray-400 mt-1"></i>
+                          <span class="text-sm">{activity}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+
+                {post.nearbyVillage && (
+                  <div class="mt-4 p-3 bg-purple-50 rounded-lg border border-purple-200">
+                    <p class="text-purple-800">
+                      <i class="fas fa-campground mr-2"></i>
+                      Nearby: {post.nearbyVillage}
+                    </p>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+      </main>
+    </div>,
+    { title: 'Trading Posts - Oregon Trail' }
   )
 })
 
@@ -672,18 +849,18 @@ app.get('/dice', (c) => {
             </div>
           </div>
 
-          {/* d20 - Hunting */}
+          {/* d22 - Hunting */}
           <div class="bg-white rounded-xl shadow-lg p-6 text-center">
             <h3 class="text-lg font-bold text-gray-800 mb-4">
               <i class="fas fa-crosshairs text-green-600 mr-2"></i>Hunting
             </h3>
-            <div id="d20-result" class="text-6xl font-bold text-green-600 mb-4 dice-display">--</div>
-            <button id="roll-d20" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition">
-              Roll d20
+            <div id="d22-result" class="text-6xl font-bold text-green-600 mb-4 dice-display">--</div>
+            <button id="roll-d22" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition">
+              Roll d22
             </button>
-            <div id="d20-event" class="mt-4 p-4 bg-gray-50 rounded-lg text-left hidden">
-              <h4 id="d20-event-name" class="font-bold text-gray-800"></h4>
-              <p id="d20-event-desc" class="text-sm text-gray-600 mt-1"></p>
+            <div id="d22-event" class="mt-4 p-4 bg-gray-50 rounded-lg text-left hidden">
+              <h4 id="d22-event-name" class="font-bold text-gray-800"></h4>
+              <p id="d22-event-desc" class="text-sm text-gray-600 mt-1"></p>
             </div>
           </div>
 
@@ -715,8 +892,8 @@ app.get('/dice', (c) => {
               <label class="text-sm text-gray-600">Modifier:</label>
               <select id="combat-modifier" class="px-2 py-1 border rounded">
                 <option value="0">+0 (Unarmed)</option>
-                <option value="1">+1 (Pistol)</option>
-                <option value="2">+2 (Rifle/Shotgun)</option>
+                <option value="1">+1 (Pistol/Quick)</option>
+                <option value="2">+2 (Rifle/Powerful)</option>
               </select>
             </div>
             <div id="d6-total" class="mt-2 text-lg font-bold text-gray-700">
@@ -725,63 +902,60 @@ app.get('/dice', (c) => {
           </div>
         </div>
 
-        {/* Random Event Table */}
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
-          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-            <i class="fas fa-list text-purple-600"></i> Random Event Table (d100)
-          </h2>
-          <div class="overflow-x-auto">
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="bg-gray-100">
-                  <th class="px-4 py-2 text-left">Roll</th>
-                  <th class="px-4 py-2 text-left">Event</th>
-                  <th class="px-4 py-2 text-left">Description</th>
-                </tr>
-              </thead>
-              <tbody>
-                {RANDOM_EVENTS.map(event => (
-                  <tr class="border-b hover:bg-gray-50">
-                    <td class="px-4 py-2 font-mono font-bold">
-                      {event.roll[0] === event.roll[1] ? event.roll[0] : `${event.roll[0]}-${event.roll[1]}`}
-                    </td>
-                    <td class="px-4 py-2 font-medium">{event.name}</td>
-                    <td class="px-4 py-2 text-gray-600">{event.description}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+        {/* Tesla Gun Roller */}
+        <div class="bg-gradient-to-r from-yellow-400 to-yellow-600 rounded-xl shadow-lg p-6 mb-8 text-white">
+          <div class="flex items-center justify-between">
+            <div>
+              <h3 class="text-xl font-bold mb-2">⚡ Tesla Gun (d10)</h3>
+              <p class="text-sm opacity-90">Famous Inventor is immune to negative self-effects!</p>
+            </div>
+            <div class="text-center">
+              <div id="d10-result" class="text-5xl font-bold mb-2">--</div>
+              <button id="roll-d10" class="bg-white text-yellow-600 px-6 py-2 rounded-lg font-bold hover:bg-gray-100 transition">
+                Fire Tesla Gun!
+              </button>
+            </div>
+          </div>
+          <div id="d10-event" class="mt-4 p-4 bg-white/20 rounded-lg hidden">
+            <p id="d10-event-desc" class="font-bold"></p>
           </div>
         </div>
 
         {/* Hunting Table */}
-        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
           <div class="bg-white rounded-xl shadow-lg p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-crosshairs text-green-600"></i> Hunting Table (d20)
+              <i class="fas fa-crosshairs text-green-600"></i> Hunting Table (d22)
             </h2>
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="bg-gray-100">
-                  <th class="px-3 py-2 text-left">Roll</th>
-                  <th class="px-3 py-2 text-left">Result</th>
-                  <th class="px-3 py-2 text-left">Meat</th>
-                  <th class="px-3 py-2 text-left">Fur</th>
-                </tr>
-              </thead>
-              <tbody>
-                {HUNTING_RESULTS.map(result => (
-                  <tr class={`border-b ${result.damage ? 'bg-red-50' : result.combat ? 'bg-yellow-50' : ''}`}>
-                    <td class="px-3 py-2 font-mono font-bold">
-                      {result.roll[0] === result.roll[1] ? result.roll[0] : `${result.roll[0]}-${result.roll[1]}`}
-                    </td>
-                    <td class="px-3 py-2">{result.name}</td>
-                    <td class="px-3 py-2">{result.meat > 0 ? result.meat : '-'}</td>
-                    <td class="px-3 py-2">{result.fur ? '✓' : '-'}</td>
+            <div class="overflow-x-auto max-h-96 overflow-y-auto">
+              <table class="w-full text-sm">
+                <thead class="sticky top-0 bg-white">
+                  <tr class="bg-gray-100">
+                    <th class="px-3 py-2 text-left">Roll</th>
+                    <th class="px-3 py-2 text-left">Result</th>
+                    <th class="px-3 py-2 text-left">Meat</th>
+                    <th class="px-3 py-2 text-left">Special</th>
                   </tr>
-                ))}
-              </tbody>
-            </table>
+                </thead>
+                <tbody>
+                  {HUNTING_RESULTS.map(result => (
+                    <tr class={`border-b ${result.type === 'Danger' ? 'bg-red-50' : result.type === 'Predator' ? 'bg-yellow-50' : result.type === 'Special' ? 'bg-purple-50' : ''}`}>
+                      <td class="px-3 py-2 font-mono font-bold">
+                        {result.roll[0] === result.roll[1] ? result.roll[0] : `${result.roll[0]}-${result.roll[1]}`}
+                      </td>
+                      <td class="px-3 py-2 font-medium">{result.name}</td>
+                      <td class="px-3 py-2">{result.meat || '-'}</td>
+                      <td class="px-3 py-2 text-xs">
+                        {result.fur && `${result.furCount || 1} fur`}
+                        {result.hide && ` ${result.hide} hide`}
+                        {result.combat && ` FIGHT ${result.combat}`}
+                        {result.effect && ` ${result.effect}`}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
 
           <div class="bg-white rounded-xl shadow-lg p-6">
@@ -799,13 +973,44 @@ app.get('/dice', (c) => {
               </thead>
               <tbody>
                 {FISHING_RESULTS.map(result => (
-                  <tr class="border-b">
-                    <td class="px-3 py-2 font-mono font-bold">
-                      {result.roll[0] === result.roll[1] ? result.roll[0] : `${result.roll[0]}-${result.roll[1]}`}
+                  <tr class={`border-b ${result.fur ? 'bg-purple-50' : ''}`}>
+                    <td class="px-3 py-2 font-mono font-bold">{result.roll[0]}</td>
+                    <td class="px-3 py-2 font-medium">{result.name}</td>
+                    <td class="px-3 py-2">{result.meat || '-'}</td>
+                    <td class="px-3 py-2">{result.fur ? `${result.furCount} fur` : '-'}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p class="mt-4 text-sm text-gray-500 bg-blue-50 p-3 rounded">
+              <i class="fas fa-info-circle mr-1"></i>
+              <strong>Fishing skill</strong> = 2x meat from all catches!
+            </p>
+          </div>
+        </div>
+
+        {/* Random Event Table */}
+        <div class="bg-white rounded-xl shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="fas fa-list text-purple-600"></i> Random Event Table (d100, Events 1-83)
+          </h2>
+          <div class="overflow-x-auto max-h-96 overflow-y-auto">
+            <table class="w-full text-sm">
+              <thead class="sticky top-0 bg-white">
+                <tr class="bg-gray-100">
+                  <th class="px-4 py-2 text-left">Roll</th>
+                  <th class="px-4 py-2 text-left">Event</th>
+                  <th class="px-4 py-2 text-left">Description</th>
+                </tr>
+              </thead>
+              <tbody>
+                {RANDOM_EVENTS.map(event => (
+                  <tr class={`border-b hover:bg-gray-50 ${event.combat ? 'bg-red-50' : event.vp ? 'bg-green-50' : ''}`}>
+                    <td class="px-4 py-2 font-mono font-bold">
+                      {event.roll[0] === event.roll[1] ? event.roll[0] : `${event.roll[0]}-${event.roll[1]}`}
                     </td>
-                    <td class="px-3 py-2">{result.name}</td>
-                    <td class="px-3 py-2">{result.meat > 0 ? result.meat : '-'}</td>
-                    <td class="px-3 py-2">{result.fur ? '✓' : '-'}</td>
+                    <td class="px-4 py-2 font-medium">{event.name}</td>
+                    <td class="px-4 py-2 text-gray-600 text-xs">{event.description}</td>
                   </tr>
                 ))}
               </tbody>
@@ -831,7 +1036,26 @@ app.get('/combat', (c) => {
         </div>
       </header>
 
-      <main class="max-w-5xl mx-auto p-8">
+      <main class="max-w-6xl mx-auto p-8">
+        {/* Fight Levels Reference */}
+        <div class="bg-black/40 rounded-xl p-6 mb-8 text-white">
+          <h2 class="text-lg font-bold mb-4">Fight Levels</h2>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="bg-green-900/50 p-4 rounded-lg">
+              <h3 class="font-bold text-green-400">Level 1</h3>
+              <p class="text-sm">Any weapon works. HP: 1</p>
+            </div>
+            <div class="bg-yellow-900/50 p-4 rounded-lg">
+              <h3 class="font-bold text-yellow-400">Level 2</h3>
+              <p class="text-sm">Any weapon works. HP: 3</p>
+            </div>
+            <div class="bg-red-900/50 p-4 rounded-lg">
+              <h3 class="font-bold text-red-400">Level 3</h3>
+              <p class="text-sm">Powerful weapon required. HP: 3 + Fear</p>
+            </div>
+          </div>
+        </div>
+
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
           {/* Enemy Panel */}
           <div class="bg-black/40 rounded-xl p-6 text-white">
@@ -855,7 +1079,6 @@ app.get('/combat', (c) => {
                 <div id="enemy-hp-bar" class="bg-red-500 h-4 rounded-full transition-all" style="width: 100%"></div>
               </div>
               <div id="enemy-abilities" class="flex gap-2 flex-wrap">
-                {/* Abilities displayed here */}
               </div>
             </div>
 
@@ -883,9 +1106,8 @@ app.get('/combat', (c) => {
                 <label class="block text-sm mb-2">Weapon:</label>
                 <select id="attack-weapon" class="w-full bg-gray-700 border border-gray-600 rounded px-3 py-2">
                   <option value="0">Unarmed (+0)</option>
-                  <option value="1">Pistol (+1)</option>
-                  <option value="2">Rifle (+2)</option>
-                  <option value="2">Shotgun (+2)</option>
+                  <option value="1">Pistol / Quick (+1)</option>
+                  <option value="2">Rifle / Powerful (+2)</option>
                 </select>
               </div>
 
@@ -905,11 +1127,43 @@ app.get('/combat', (c) => {
               <h3 class="font-bold mb-2">Combat Rules:</h3>
               <ul class="text-sm text-gray-300 space-y-1">
                 <li>• Roll 1d6 per armed character</li>
-                <li>• Add weapon modifier (+1 Pistol, +2 Rifle/Shotgun)</li>
+                <li>• Add weapon modifier (+1 Quick, +2 Powerful)</li>
                 <li>• Roll of 4+ after modifiers = HIT (1 damage)</li>
+                <li>• Tough enemies: Only powerful weapons work</li>
                 <li>• Enemy attacks random party member if alive</li>
               </ul>
             </div>
+          </div>
+        </div>
+
+        {/* Enemy Reference */}
+        <div class="mt-8 bg-black/40 rounded-xl p-6 text-white">
+          <h2 class="text-xl font-bold mb-4">Enemy Reference</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-gray-800">
+                  <th class="px-4 py-2 text-left">Enemy</th>
+                  <th class="px-4 py-2 text-left">Weapon</th>
+                  <th class="px-4 py-2 text-left">HP</th>
+                  <th class="px-4 py-2 text-left">Abilities</th>
+                </tr>
+              </thead>
+              <tbody>
+                {ENEMIES.map(enemy => (
+                  <tr class="border-b border-gray-700">
+                    <td class="px-4 py-2 font-medium">{enemy.name}</td>
+                    <td class="px-4 py-2">{enemy.weapon}</td>
+                    <td class="px-4 py-2 font-bold text-red-400">{enemy.hp}</td>
+                    <td class="px-4 py-2">
+                      {enemy.abilities.map(a => (
+                        <span class="bg-purple-600 px-2 py-0.5 rounded text-xs mr-1">{a}</span>
+                      ))}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
           </div>
         </div>
 
@@ -943,6 +1197,21 @@ app.get('/travel', (c) => {
       </header>
 
       <main class="max-w-4xl mx-auto p-8">
+        {/* Wagon Problems */}
+        <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-4 mb-6">
+          <h3 class="font-bold text-yellow-800 mb-2">⚠️ Wagon Problems</h3>
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+            <div>
+              <p class="text-yellow-700"><strong>Plains:</strong> {WAGON_PROBLEMS.plains}% chance</p>
+              <p class="text-yellow-700"><strong>Mountains:</strong> {WAGON_PROBLEMS.mountains}% chance</p>
+            </div>
+            <div class="md:col-span-2">
+              <p class="text-yellow-700"><strong>Repair Chances per Day:</strong></p>
+              <p class="text-yellow-700">No Mechanical: {WAGON_PROBLEMS.repairChance.noMechanical}% | Mech 1: {WAGON_PROBLEMS.repairChance.mechanical1}% | Mech 3: {WAGON_PROBLEMS.repairChance.mechanical3}%</p>
+            </div>
+          </div>
+        </div>
+
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
           <h2 class="text-xl font-bold text-gray-800 mb-6">Calculate Travel Time</h2>
           
@@ -998,18 +1267,22 @@ app.get('/travel', (c) => {
 
           <div class="mb-6">
             <label class="block text-sm font-medium text-gray-700 mb-3">Time Multipliers:</label>
-            <div class="flex gap-4">
+            <div class="flex flex-wrap gap-4">
               <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
                 <input type="radio" name="time-mult" value="1" checked />
                 <span class="text-sm">Normal (x1)</span>
               </label>
               <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
                 <input type="radio" name="time-mult" value="2" />
-                <span class="text-sm">Depressed (x2)</span>
+                <span class="text-sm">Fear/Angry (x2)</span>
               </label>
               <label class="flex items-center gap-2 p-3 bg-gray-50 rounded-lg cursor-pointer hover:bg-gray-100">
                 <input type="radio" name="time-mult" value="3" />
-                <span class="text-sm">Severely Depressed (x3)</span>
+                <span class="text-sm">Depressed (x3)</span>
+              </label>
+              <label class="flex items-center gap-2 p-3 bg-green-50 rounded-lg cursor-pointer hover:bg-green-100">
+                <input type="radio" name="time-mult" value="0.5" />
+                <span class="text-sm text-green-700">Happy (x0.5) 🎉</span>
               </label>
             </div>
           </div>
@@ -1069,7 +1342,7 @@ app.get('/victory', (c) => {
               <label class="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
                 <input type="checkbox" id="reached-oregon" class="w-5 h-5" />
                 <span class="font-medium">Reached Oregon City</span>
-                <span class="ml-auto font-bold text-green-600">+500 VP</span>
+                <span class="ml-auto font-bold text-green-600">+{VP_REWARDS.reachOregon} VP</span>
               </label>
             </div>
 
@@ -1081,13 +1354,13 @@ app.get('/victory', (c) => {
                   <label class="block text-sm font-medium text-gray-700 mb-2">Surviving Spouses</label>
                   <input type="number" id="surviving-spouses" value="0" min="0" max="10"
                     class="w-full px-4 py-2 border rounded-lg text-center" />
-                  <p class="text-xs text-gray-500 mt-1">+100 VP each</p>
+                  <p class="text-xs text-gray-500 mt-1">+{VP_REWARDS.survivingSpouse} VP each</p>
                 </div>
                 <div class="p-4 bg-gray-50 rounded-lg">
                   <label class="block text-sm font-medium text-gray-700 mb-2">Surviving Children</label>
                   <input type="number" id="surviving-children" value="0" min="0" max="20"
                     class="w-full px-4 py-2 border rounded-lg text-center" />
-                  <p class="text-xs text-gray-500 mt-1">+50 VP each</p>
+                  <p class="text-xs text-gray-500 mt-1">+{VP_REWARDS.survivingChild} VP each</p>
                 </div>
               </div>
             </div>
@@ -1117,27 +1390,47 @@ app.get('/victory', (c) => {
 
             {/* Discoveries */}
             <div class="mb-8">
-              <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Discoveries</h3>
-              <div class="space-y-3">
+              <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Discoveries & Achievements</h3>
+              <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
                 <label class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100">
                   <input type="checkbox" id="viking-rune" class="w-5 h-5" />
                   <span>Viking Rune Stone</span>
-                  <span class="ml-auto font-bold text-purple-600">+200 VP</span>
+                  <span class="ml-auto font-bold text-purple-600">+{VP_REWARDS.vikingRune} VP</span>
                 </label>
                 <label class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100">
                   <input type="checkbox" id="indian-mummy" class="w-5 h-5" />
                   <span>Indian Mummy</span>
-                  <span class="ml-auto font-bold text-purple-600">+100 VP</span>
+                  <span class="ml-auto font-bold text-purple-600">+{VP_REWARDS.indianMummy} VP</span>
                 </label>
                 <label class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100">
                   <input type="checkbox" id="sasquatch" class="w-5 h-5" />
                   <span>Sasquatch (Defeated)</span>
-                  <span class="ml-auto font-bold text-purple-600">+400 VP</span>
+                  <span class="ml-auto font-bold text-purple-600">+{VP_REWARDS.sasquatch} VP</span>
                 </label>
                 <label class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100">
                   <input type="checkbox" id="jackalope" class="w-5 h-5" />
                   <span>Jackalope</span>
-                  <span class="ml-auto font-bold text-purple-600">+100 VP</span>
+                  <span class="ml-auto font-bold text-purple-600">+{VP_REWARDS.jackalope} VP</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100">
+                  <input type="checkbox" id="dead-alien" class="w-5 h-5" />
+                  <span>Dead Alien!</span>
+                  <span class="ml-auto font-bold text-purple-600">+{VP_REWARDS.deadAlien} VP</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100">
+                  <input type="checkbox" id="dinosaur-bones" class="w-5 h-5" />
+                  <span>Dinosaur Bones</span>
+                  <span class="ml-auto font-bold text-purple-600">+{VP_REWARDS.dinosaurBones} VP</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100">
+                  <input type="checkbox" id="fountain-youth" class="w-5 h-5" />
+                  <span>Fountain of Youth</span>
+                  <span class="ml-auto font-bold text-purple-600">+{VP_REWARDS.fountainOfYouth} VP</span>
+                </label>
+                <label class="flex items-center gap-3 p-3 bg-purple-50 rounded-lg cursor-pointer hover:bg-purple-100">
+                  <input type="checkbox" id="convert-tribe" class="w-5 h-5" />
+                  <span>Converted Tribe</span>
+                  <span class="ml-auto font-bold text-purple-600">+{VP_REWARDS.convertTribe} VP</span>
                 </label>
               </div>
             </div>
@@ -1149,7 +1442,7 @@ app.get('/victory', (c) => {
                 <label class="block text-sm font-medium text-gray-700 mb-2">Number of Paintings</label>
                 <input type="number" id="paintings" value="0" min="0" max="100"
                   class="w-full px-4 py-2 border rounded-lg text-center" />
-                <p class="text-xs text-gray-500 mt-1">+5 VP each</p>
+                <p class="text-xs text-gray-500 mt-1">+{VP_REWARDS.paintingPer} VP each</p>
               </div>
             </div>
 
@@ -1159,7 +1452,7 @@ app.get('/victory', (c) => {
               <label class="flex items-center gap-3 p-3 bg-yellow-50 rounded-lg cursor-pointer hover:bg-yellow-100">
                 <input type="checkbox" id="elder-statesman" class="w-5 h-5" />
                 <span>Elder Statesman (2x VP)</span>
-                <span class="ml-auto font-bold text-yellow-600">x2</span>
+                <span class="ml-auto font-bold text-yellow-600">x{VP_REWARDS.elderStatesmanMultiplier}</span>
               </label>
             </div>
 
@@ -1205,7 +1498,7 @@ app.get('/reference', (c) => {
             </h2>
             <div class="mb-6">
               <h3 class="font-bold text-red-600 mb-3">Negative Effects</h3>
-              <div class="space-y-2">
+              <div class="space-y-2 max-h-64 overflow-y-auto">
                 {STATUS_EFFECTS.negative.map(effect => (
                   <div class="flex items-start gap-3 p-3 bg-red-50 rounded-lg">
                     <span class="text-2xl">{effect.icon}</span>
@@ -1233,82 +1526,57 @@ app.get('/reference', (c) => {
             </div>
           </div>
 
-          {/* Enemies */}
+          {/* Treasures */}
           <div class="bg-white rounded-xl shadow-lg p-6">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-skull text-gray-600"></i> Enemies
+              <i class="fas fa-gem text-yellow-600"></i> Treasures
             </h2>
-            <div class="space-y-3">
-              {ENEMIES.map(enemy => (
-                <div class="p-4 border rounded-lg hover:border-red-300 transition">
-                  <div class="flex items-center justify-between mb-2">
-                    <span class="font-bold text-gray-800">{enemy.name}</span>
-                    <span class="bg-red-100 text-red-700 px-3 py-1 rounded-full font-bold">{enemy.hp} HP</span>
-                  </div>
-                  <div class="flex items-center gap-2">
-                    <span class="text-xs bg-gray-200 px-2 py-1 rounded">Level {enemy.level}</span>
-                    {enemy.abilities.map(ability => (
-                      <span class="text-xs bg-purple-100 text-purple-700 px-2 py-1 rounded">{ability}</span>
-                    ))}
-                  </div>
+            <div class="space-y-4">
+              <div>
+                <h3 class="font-bold text-yellow-600 mb-2">Big Treasure (1/10 chance)</h3>
+                <div class="space-y-1">
+                  {TREASURES.big.map(t => (
+                    <div class="p-2 bg-yellow-50 rounded text-sm">
+                      <span class="font-medium">{t.name}</span>: {t.effect}
+                    </div>
+                  ))}
                 </div>
-              ))}
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-600 mb-2">Medium Treasure (2-7/10)</h3>
+                <div class="p-2 bg-gray-50 rounded text-sm">
+                  {TREASURES.medium[0].name}: {TREASURES.medium[0].effect}
+                </div>
+              </div>
+              <div>
+                <h3 class="font-bold text-gray-400 mb-2">Low Treasure (8-10/10)</h3>
+                <div class="p-2 bg-gray-50 rounded text-sm">
+                  {TREASURES.low[0].name}: {TREASURES.low[0].effect}
+                </div>
+              </div>
             </div>
           </div>
 
-          {/* Mechanical Skill */}
-          <div class="bg-white rounded-xl shadow-lg p-6">
-            <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
-              <i class="fas fa-wrench text-blue-600"></i> Wagon Repair (Mechanical)
-            </h2>
-            <table class="w-full">
-              <thead>
-                <tr class="bg-gray-100">
-                  <th class="px-4 py-2 text-left">Skill Level</th>
-                  <th class="px-4 py-2 text-left">Fix Chance/Day</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr class="border-b">
-                  <td class="px-4 py-3">No Skill</td>
-                  <td class="px-4 py-3 font-bold text-red-600">10%</td>
-                </tr>
-                <tr class="border-b">
-                  <td class="px-4 py-3">Mechanical 1</td>
-                  <td class="px-4 py-3 font-bold text-yellow-600">50%</td>
-                </tr>
-                <tr>
-                  <td class="px-4 py-3">Mechanical 3</td>
-                  <td class="px-4 py-3 font-bold text-green-600">95%</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-
           {/* Trail Stops */}
-          <div class="bg-white rounded-xl shadow-lg p-6">
+          <div class="bg-white rounded-xl shadow-lg p-6 lg:col-span-2">
             <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
               <i class="fas fa-map-marker-alt text-green-600"></i> Trail Stops
             </h2>
-            <div class="space-y-2">
+            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
               {TRAIL_STOPS.map((stop, index) => (
-                <div class="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div class="flex items-center gap-3">
-                    <span class={`w-8 h-8 rounded-full flex items-center justify-center text-white text-sm font-bold ${
+                <div class="p-3 bg-gray-50 rounded-lg">
+                  <div class="flex items-center gap-2 mb-1">
+                    <span class={`w-6 h-6 rounded-full flex items-center justify-center text-white text-xs font-bold ${
                       stop.type === 'start' ? 'bg-green-600' :
                       stop.type === 'end' ? 'bg-red-600' :
                       stop.type === 'fort' ? 'bg-blue-600' :
+                      stop.type === 'village' ? 'bg-purple-600' :
                       'bg-yellow-600'
                     }`}>{index + 1}</span>
-                    <div>
-                      <span class="font-medium">{stop.name}</span>
-                      <p class="text-xs text-gray-500">{stop.description}</p>
-                    </div>
+                    <span class="font-medium text-sm">{stop.name}</span>
                   </div>
-                  <div class="text-right">
-                    <span class="text-sm font-bold">{stop.distance} mi</span>
-                    <p class="text-xs text-gray-500">{stop.daysFromPrev} days</p>
-                  </div>
+                  <p class="text-xs text-gray-500">{stop.description}</p>
+                  <p class="text-xs text-gray-400">{stop.distance}mi / {stop.daysFromPrev} days</p>
                 </div>
               ))}
             </div>
@@ -1317,39 +1585,6 @@ app.get('/reference', (c) => {
       </main>
     </div>,
     { title: 'Reference Guide - Oregon Trail' }
-  )
-})
-
-// Presentation Mode
-app.get('/present', (c) => {
-  return c.render(
-    <div class="min-h-screen bg-gradient-to-b from-sky-400 to-green-600">
-      <div class="max-w-6xl mx-auto p-8 text-center text-white">
-        <h1 class="text-6xl font-bold mb-8 drop-shadow-lg">🚂 The Oregon Trail</h1>
-        <p class="text-2xl mb-12">Westward Ho! Begin Your Journey</p>
-        
-        <div class="grid grid-cols-3 gap-8 mb-12">
-          <a href="/present/job" class="bg-white/20 backdrop-blur rounded-2xl p-8 hover:bg-white/30 transition cursor-pointer">
-            <i class="fas fa-briefcase text-5xl mb-4"></i>
-            <h3 class="text-2xl font-bold">Job Classes</h3>
-          </a>
-          <a href="/dice" class="bg-white/20 backdrop-blur rounded-2xl p-8 hover:bg-white/30 transition cursor-pointer">
-            <i class="fas fa-dice text-5xl mb-4"></i>
-            <h3 class="text-2xl font-bold">Roll Dice</h3>
-          </a>
-          <a href="/store" class="bg-white/20 backdrop-blur rounded-2xl p-8 hover:bg-white/30 transition cursor-pointer">
-            <i class="fas fa-store text-5xl mb-4"></i>
-            <h3 class="text-2xl font-bold">General Store</h3>
-          </a>
-        </div>
-
-        <div class="bg-black/20 backdrop-blur rounded-2xl p-6 inline-block">
-          <p class="text-lg">Trail Map: Independence, MO → Oregon City</p>
-          <p class="text-4xl font-bold mt-2">1,932 Miles</p>
-        </div>
-      </div>
-    </div>,
-    { title: 'Presentation - Oregon Trail' }
   )
 })
 
@@ -1362,7 +1597,6 @@ app.get('/api/game-data', (c) => {
     nationalities: NATIONALITIES,
     religions: RELIGIONS,
     supplies: SUPPLIES,
-    inflationRates: INFLATION_RATES,
     trailStops: TRAIL_STOPS,
     randomEvents: RANDOM_EVENTS,
     huntingResults: HUNTING_RESULTS,
@@ -1370,7 +1604,10 @@ app.get('/api/game-data', (c) => {
     enemies: ENEMIES,
     statusEffects: STATUS_EFFECTS,
     skills: SKILLS,
-    vpRewards: VP_REWARDS
+    vpRewards: VP_REWARDS,
+    tradingPosts: TRADING_POSTS,
+    treasures: TREASURES,
+    teslaGunResults: TESLA_GUN_RESULTS
   })
 })
 
@@ -1381,8 +1618,10 @@ app.get('/api/roll/:type', (c) => {
   
   switch(type) {
     case 'd100': max = 100; break
+    case 'd22': max = 22; break
     case 'd20': max = 20; break
     case 'd12': max = 12; break
+    case 'd10': max = 10; break
     case 'd6': max = 6; break
     case 'd4': max = 4; break
     default: max = parseInt(type.replace('d', '')) || 6
@@ -1390,14 +1629,16 @@ app.get('/api/roll/:type', (c) => {
   
   const result = Math.floor(Math.random() * max) + 1
   
-  // Find matching event for d100
+  // Find matching event
   let event = null
   if (type === 'd100') {
     event = RANDOM_EVENTS.find(e => result >= e.roll[0] && result <= e.roll[1])
-  } else if (type === 'd20') {
+  } else if (type === 'd22' || type === 'd20') {
     event = HUNTING_RESULTS.find(e => result >= e.roll[0] && result <= e.roll[1])
   } else if (type === 'd12') {
     event = FISHING_RESULTS.find(e => result >= e.roll[0] && result <= e.roll[1])
+  } else if (type === 'd10') {
+    event = TESLA_GUN_RESULTS.find(e => e.roll === result)
   }
   
   return c.json({ roll: result, max, event })
@@ -1420,7 +1661,6 @@ app.post('/api/games', async (c) => {
     status: 'setup'
   }
   
-  // Create wagon trains
   const numTrains = body.numTrains || 6
   for (let i = 0; i < numTrains; i++) {
     game.wagonTrains.push({
@@ -1446,16 +1686,6 @@ app.get('/api/games', (c) => {
   return c.json(Array.from(games.values()))
 })
 
-// Get single game
-app.get('/api/games/:id', (c) => {
-  const id = c.req.param('id')
-  const game = games.get(id)
-  if (!game) {
-    return c.json({ error: 'Game not found' }, 404)
-  }
-  return c.json(game)
-})
-
 // Calculate travel
 app.post('/api/calculate-travel', async (c) => {
   const body = await c.req.json()
@@ -1468,7 +1698,7 @@ app.post('/api/calculate-travel', async (c) => {
   
   const adjustedSpeed = Math.max(1, baseSpeed + (modifiers || 0))
   const baseDays = Math.ceil(totalDistance / adjustedSpeed)
-  const actualDays = baseDays * (timeMultiplier || 1)
+  const actualDays = Math.ceil(baseDays * (timeMultiplier || 1))
   const foodNeeded = actualDays * (partySize || 4)
   
   return c.json({
@@ -1494,8 +1724,12 @@ app.post('/api/calculate-vp', async (c) => {
   if (body.indianMummy) total += VP_REWARDS.indianMummy
   if (body.sasquatch) total += VP_REWARDS.sasquatch
   if (body.jackalope) total += VP_REWARDS.jackalope
+  if (body.deadAlien) total += VP_REWARDS.deadAlien
+  if (body.dinosaurBones) total += VP_REWARDS.dinosaurBones
+  if (body.fountainOfYouth) total += VP_REWARDS.fountainOfYouth
+  if (body.convertTribe) total += VP_REWARDS.convertTribe
   
-  if (body.elderStatesman) total *= 2
+  if (body.elderStatesman) total *= VP_REWARDS.elderStatesmanMultiplier
   
   return c.json({ total })
 })
