@@ -1,0 +1,21 @@
+/* Oregon Trail Teacher Interface - Custom Styles */
+
+/* This file is minimal since we're using Tailwind CSS via CDN */
+
+/* Additional custom animations */
+.dice-roll {
+  animation: roll 0.3s ease-out;
+}
+
+@keyframes roll {
+  0% { transform: rotate(0deg) scale(1.2); }
+  50% { transform: rotate(180deg) scale(0.8); }
+  100% { transform: rotate(360deg) scale(1); }
+}
+
+/* Print styles */
+@media print {
+  header, nav, button, .no-print {
+    display: none !important;
+  }
+}
