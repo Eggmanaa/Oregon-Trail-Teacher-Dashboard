@@ -1012,8 +1012,8 @@ app.get('/trading-posts', (c) => {
 // Combat Arena with Battle Simulation
 app.get('/combat', (c) => {
   return c.render(
-    <div class="min-h-screen bg-gradient-to-b from-red-900 to-gray-900">
-      <header class="bg-black/30 text-white py-4 px-8">
+    <div class="min-h-screen">
+      <header class="wagon-trail text-white py-4 px-8">
         <div class="max-w-7xl mx-auto flex items-center gap-4">
           <a href="/" class="text-white/70 hover:text-white transition"><i class="fas fa-arrow-left"></i></a>
           <h1 class="text-2xl font-bold">⚔️ Battle Simulator</h1>
@@ -1023,27 +1023,27 @@ app.get('/combat', (c) => {
       <main class="max-w-6xl mx-auto p-8">
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
           {/* Party Side */}
-          <div class="bg-black/40 rounded-xl p-6 text-white">
-            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-              <i class="fas fa-users text-blue-400"></i> Wagon Party
+          <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
+              <i class="fas fa-users text-blue-600"></i> Wagon Party
             </h2>
             <div id="party-list" class="space-y-2 mb-4 min-h-[100px]"></div>
             
-            <div class="border-t border-gray-600 pt-4">
-              <h3 class="font-medium mb-2">Add Party Member</h3>
+            <div class="border-t border-gray-300 pt-4">
+              <h3 class="font-medium mb-2 text-gray-700">Add Party Member</h3>
               <div class="grid grid-cols-2 gap-2 mb-2">
-                <input type="text" id="party-name" placeholder="Name" class="px-3 py-2 bg-gray-800 border border-gray-600 rounded" />
-                <input type="number" id="party-hp" placeholder="HP" value="3" min="1" class="px-3 py-2 bg-gray-800 border border-gray-600 rounded" />
+                <input type="text" id="party-name" placeholder="Name" class="px-3 py-2 bg-white border border-gray-300 rounded text-gray-800" />
+                <input type="number" id="party-hp" placeholder="HP" value="3" min="1" class="px-3 py-2 bg-white border border-gray-300 rounded text-gray-800" />
               </div>
               <div class="grid grid-cols-2 gap-2 mb-2">
-                <select id="party-weapon" class="px-3 py-2 bg-gray-800 border border-gray-600 rounded">
+                <select id="party-weapon" class="px-3 py-2 bg-white border border-gray-300 rounded text-gray-800">
                   <option value="1" data-weapon="unarmed">Unarmed (1 dmg)</option>
                   <option value="1" data-weapon="pistol">Pistol (1 dmg)</option>
                   <option value="2" data-weapon="rifle" selected>Rifle (2 dmg)</option>
                   <option value="3" data-weapon="shotgun">Shotgun (3 dmg)</option>
                   <option value="0" data-weapon="tesla">⚡ Tesla Gun (d10 special)</option>
                 </select>
-                <select id="party-traits" class="px-3 py-2 bg-gray-800 border border-gray-600 rounded">
+                <select id="party-traits" class="px-3 py-2 bg-white border border-gray-300 rounded text-gray-800">
                   <option value="">No Trait</option>
                   <option value="tough">Tough (half damage taken)</option>
                   <option value="bravery">Bravery (+1 to hit)</option>
@@ -1052,22 +1052,22 @@ app.get('/combat', (c) => {
                   <option value="famous_inventor">Famous Inventor (Tesla immunity)</option>
                 </select>
               </div>
-              <button onclick="addPartyMember()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+              <button onclick="addPartyMember()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
                 <i class="fas fa-plus mr-1"></i> Add Party Member
               </button>
             </div>
           </div>
 
           {/* Enemy Side */}
-          <div class="bg-black/40 rounded-xl p-6 text-white">
-            <h2 class="text-xl font-bold mb-4 flex items-center gap-2">
-              <i class="fas fa-skull text-red-400"></i> Enemies
+          <div class="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+            <h2 class="text-xl font-bold mb-4 flex items-center gap-2 text-gray-800">
+              <i class="fas fa-skull text-red-600"></i> Enemies
             </h2>
             <div id="enemy-list" class="space-y-2 mb-4 min-h-[100px]"></div>
             
-            <div class="border-t border-gray-600 pt-4">
-              <h3 class="font-medium mb-2">Add Enemy</h3>
-              <select id="enemy-select" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded mb-2">
+            <div class="border-t border-gray-300 pt-4">
+              <h3 class="font-medium mb-2 text-gray-700">Add Enemy</h3>
+              <select id="enemy-select" class="w-full px-3 py-2 bg-white border border-gray-300 rounded mb-2 text-gray-800">
                 <optgroup label="Standard Enemies">
                   {ENEMIES.map(e => (
                     <option value={JSON.stringify(e)}>{e.name} (HP: {e.hp}, Dmg: {e.damage})</option>
@@ -1079,7 +1079,7 @@ app.get('/combat', (c) => {
                   ))}
                 </optgroup>
               </select>
-              <button onclick="addEnemy()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded">
+              <button onclick="addEnemy()" class="w-full bg-red-600 hover:bg-red-700 text-white px-4 py-2 rounded">
                 <i class="fas fa-plus mr-1"></i> Add Enemy
               </button>
             </div>
@@ -1087,13 +1087,13 @@ app.get('/combat', (c) => {
         </div>
 
         {/* Native Allies Section */}
-        <div class="bg-amber-900/60 backdrop-blur-sm rounded-xl p-4 mb-8">
+        <div class="bg-amber-100/90 backdrop-blur-sm rounded-xl p-4 mb-8 shadow-lg border-2 border-amber-300">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-3">
               <span class="text-3xl">🪶</span>
               <div>
-                <h3 class="font-bold text-amber-100">Native American Allies</h3>
-                <p class="text-amber-200 text-sm">Add allied warriors when at +3 Relations (50% chance, 1d4 warriors)</p>
+                <h3 class="font-bold text-amber-800">Native American Allies</h3>
+                <p class="text-amber-700 text-sm">Add allied warriors when at +3 Relations (50% chance, 1d4 warriors)</p>
               </div>
             </div>
             <div class="flex gap-2">
@@ -1115,37 +1115,37 @@ app.get('/combat', (c) => {
         </div>
 
         {/* Battle Results */}
-        <div id="battle-results" class="bg-black/40 rounded-xl p-6 text-white hidden">
+        <div id="battle-results" class="bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg hidden">
           <h2 class="text-2xl font-bold mb-4 text-center" id="battle-outcome"></h2>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
-            <div class="bg-blue-900/50 p-4 rounded-lg text-center">
-              <p class="text-sm text-blue-300">Surviving Party</p>
-              <p class="text-3xl font-bold" id="surviving-party">0</p>
+            <div class="bg-blue-100 p-4 rounded-lg text-center border border-blue-300">
+              <p class="text-sm text-blue-700">Surviving Party</p>
+              <p class="text-3xl font-bold text-blue-800" id="surviving-party">0</p>
             </div>
-            <div class="bg-gray-900/50 p-4 rounded-lg text-center">
-              <p class="text-sm text-gray-300">Rounds</p>
-              <p class="text-3xl font-bold" id="battle-rounds">0</p>
+            <div class="bg-gray-100 p-4 rounded-lg text-center border border-gray-300">
+              <p class="text-sm text-gray-600">Rounds</p>
+              <p class="text-3xl font-bold text-gray-800" id="battle-rounds">0</p>
             </div>
-            <div class="bg-red-900/50 p-4 rounded-lg text-center">
-              <p class="text-sm text-red-300">Enemies Defeated</p>
-              <p class="text-3xl font-bold" id="enemies-defeated">0</p>
+            <div class="bg-red-100 p-4 rounded-lg text-center border border-red-300">
+              <p class="text-sm text-red-700">Enemies Defeated</p>
+              <p class="text-3xl font-bold text-red-800" id="enemies-defeated">0</p>
             </div>
           </div>
           
-          <div class="bg-gray-900 rounded-lg p-4 max-h-64 overflow-y-auto font-mono text-sm">
+          <div class="bg-gray-800 rounded-lg p-4 max-h-64 overflow-y-auto font-mono text-sm text-white">
             <pre id="battle-log" class="whitespace-pre-wrap"></pre>
           </div>
         </div>
 
         {/* Enemy Reference */}
-        <div class="mt-8 bg-black/40 rounded-xl p-6 text-white">
-          <h2 class="text-xl font-bold mb-4">Enemy Reference</h2>
+        <div class="mt-8 bg-white/90 backdrop-blur-sm rounded-xl p-6 shadow-lg">
+          <h2 class="text-xl font-bold mb-4 text-gray-800">Enemy Reference</h2>
           <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2 text-sm">
             {ENEMIES.map(e => (
-              <div class="bg-gray-800 p-2 rounded">
-                <span class="font-medium">{e.name}</span>
-                <span class="text-red-400 ml-1">HP:{e.hp}</span>
-                <span class="text-yellow-400 ml-1">Dmg:{e.damage}</span>
+              <div class="bg-gray-100 p-2 rounded border border-gray-300">
+                <span class="font-medium text-gray-800">{e.name}</span>
+                <span class="text-red-600 ml-1">HP:{e.hp}</span>
+                <span class="text-amber-600 ml-1">Dmg:{e.damage}</span>
               </div>
             ))}
           </div>
@@ -1162,10 +1162,10 @@ app.get('/combat', (c) => {
             const traits = p.traits ? ' [' + p.traits + ']' : '';
             const weapon = p.hasTesla ? '⚡Tesla' : 'Dmg:' + p.damage;
             const isNative = p.isNativeAlly ? '🪶 ' : '';
-            const bgClass = p.isNativeAlly ? 'bg-amber-900/50' : 'bg-blue-900/50';
+            const bgClass = p.isNativeAlly ? 'bg-amber-100 border border-amber-300' : 'bg-blue-100 border border-blue-300';
             return '<div class="flex items-center justify-between ' + bgClass + ' p-2 rounded">' +
-              '<span>' + isNative + p.name + ' (HP:' + p.hp + ', ' + weapon + ')' + traits + '</span>' +
-              '<button onclick="removeParty(' + i + ')" class="text-red-400 hover:text-red-300"><i class="fas fa-times"></i></button>' +
+              '<span class="text-gray-800">' + isNative + p.name + ' (HP:' + p.hp + ', ' + weapon + ')' + traits + '</span>' +
+              '<button onclick="removeParty(' + i + ')" class="text-red-600 hover:text-red-800"><i class="fas fa-times"></i></button>' +
               '</div>';
           }).join('');
         }
@@ -1173,9 +1173,9 @@ app.get('/combat', (c) => {
         function renderEnemies() {
           const list = document.getElementById('enemy-list');
           list.innerHTML = enemies.map((e, i) => 
-            '<div class="flex items-center justify-between bg-red-900/50 p-2 rounded">' +
-            '<span>' + e.name + ' (HP:' + e.hp + ', Dmg:' + e.damage + ')' + (e.abilities ? ' [' + e.abilities.join(', ') + ']' : '') + '</span>' +
-            '<button onclick="removeEnemy(' + i + ')" class="text-red-400 hover:text-red-300"><i class="fas fa-times"></i></button>' +
+            '<div class="flex items-center justify-between bg-red-100 border border-red-300 p-2 rounded">' +
+            '<span class="text-gray-800">' + e.name + ' (HP:' + e.hp + ', Dmg:' + e.damage + ')' + (e.abilities ? ' [' + e.abilities.join(', ') + ']' : '') + '</span>' +
+            '<button onclick="removeEnemy(' + i + ')" class="text-red-600 hover:text-red-800"><i class="fas fa-times"></i></button>' +
             '</div>'
           ).join('');
         }
