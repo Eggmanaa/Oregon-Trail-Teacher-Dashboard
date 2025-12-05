@@ -35,7 +35,13 @@ app.get('/', async (c) => {
   }
   
   return c.render(
-    <div class="min-h-screen">
+    <div class="min-h-screen relative">
+      {/* Background Image */}
+      <div 
+        class="fixed inset-0 z-0"
+        style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/0d/Emigrants_Crossing_the_Plains%2C_or_The_Oregon_Trail_%28Albert_Bierstadt%29%2C_1869.jpg'); background-size: cover; background-position: center; opacity: 0.15;"
+      ></div>
+      <div class="relative z-10">
       <header class="wagon-trail text-white py-6 px-8 shadow-lg">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
           <div class="flex items-center gap-4">
@@ -195,6 +201,7 @@ app.get('/', async (c) => {
           </div>
         </div>
       </main>
+      </div>
     </div>,
     { title: 'Oregon Trail - Dashboard' }
   )
@@ -1034,15 +1041,24 @@ app.get('/combat', (c) => {
               </div>
               <div class="grid grid-cols-2 gap-2 mb-2">
                 <select id="party-weapon" class="px-3 py-2 bg-gray-800 border border-gray-600 rounded">
-                  <option value="1">Unarmed (1 dmg)</option>
-                  <option value="1">Pistol (1 dmg)</option>
-                  <option value="2" selected>Rifle (2 dmg)</option>
-                  <option value="3">Shotgun (3 dmg)</option>
+                  <option value="1" data-weapon="unarmed">Unarmed (1 dmg)</option>
+                  <option value="1" data-weapon="pistol">Pistol (1 dmg)</option>
+                  <option value="2" data-weapon="rifle" selected>Rifle (2 dmg)</option>
+                  <option value="3" data-weapon="shotgun">Shotgun (3 dmg)</option>
+                  <option value="0" data-weapon="tesla">⚡ Tesla Gun (d10 special)</option>
                 </select>
-                <button onclick="addPartyMember()" class="bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
-                  <i class="fas fa-plus mr-1"></i> Add
-                </button>
+                <select id="party-traits" class="px-3 py-2 bg-gray-800 border border-gray-600 rounded">
+                  <option value="">No Trait</option>
+                  <option value="tough">Tough (half damage taken)</option>
+                  <option value="bravery">Bravery (+1 to hit)</option>
+                  <option value="weapons">Weapons skill (+1 dmg)</option>
+                  <option value="lucky">Lucky (reroll misses)</option>
+                  <option value="famous_inventor">Famous Inventor (Tesla immunity)</option>
+                </select>
               </div>
+              <button onclick="addPartyMember()" class="w-full bg-blue-600 hover:bg-blue-700 px-4 py-2 rounded">
+                <i class="fas fa-plus mr-1"></i> Add Party Member
+              </button>
             </div>
           </div>
 
@@ -1118,19 +1134,21 @@ app.get('/combat', (c) => {
         
         function renderParty() {
           const list = document.getElementById('party-list');
-          list.innerHTML = party.map((p, i) => 
-            '<div class="flex items-center justify-between bg-blue-900/50 p-2 rounded">' +
-            '<span>' + p.name + ' (HP:' + p.hp + ', Dmg:' + p.damage + ')</span>' +
-            '<button onclick="removeParty(' + i + ')" class="text-red-400 hover:text-red-300"><i class="fas fa-times"></i></button>' +
-            '</div>'
-          ).join('');
+          list.innerHTML = party.map((p, i) => {
+            const traits = p.traits ? ' [' + p.traits + ']' : '';
+            const weapon = p.hasTesla ? '⚡Tesla' : 'Dmg:' + p.damage;
+            return '<div class="flex items-center justify-between bg-blue-900/50 p-2 rounded">' +
+              '<span>' + p.name + ' (HP:' + p.hp + ', ' + weapon + ')' + traits + '</span>' +
+              '<button onclick="removeParty(' + i + ')" class="text-red-400 hover:text-red-300"><i class="fas fa-times"></i></button>' +
+              '</div>';
+          }).join('');
         }
         
         function renderEnemies() {
           const list = document.getElementById('enemy-list');
           list.innerHTML = enemies.map((e, i) => 
             '<div class="flex items-center justify-between bg-red-900/50 p-2 rounded">' +
-            '<span>' + e.name + ' (HP:' + e.hp + ', Dmg:' + e.damage + ')</span>' +
+            '<span>' + e.name + ' (HP:' + e.hp + ', Dmg:' + e.damage + ')' + (e.abilities ? ' [' + e.abilities.join(', ') + ']' : '') + '</span>' +
             '<button onclick="removeEnemy(' + i + ')" class="text-red-400 hover:text-red-300"><i class="fas fa-times"></i></button>' +
             '</div>'
           ).join('');
@@ -1139,8 +1157,21 @@ app.get('/combat', (c) => {
         function addPartyMember() {
           const name = document.getElementById('party-name').value || 'Settler';
           const hp = parseInt(document.getElementById('party-hp').value) || 3;
-          const damage = parseInt(document.getElementById('party-weapon').value) || 1;
-          party.push({ name, hp, damage });
+          const weaponSelect = document.getElementById('party-weapon');
+          const damage = parseInt(weaponSelect.value) || 1;
+          const weaponType = weaponSelect.options[weaponSelect.selectedIndex].dataset.weapon;
+          const traits = document.getElementById('party-traits').value;
+          
+          const member = { 
+            name, 
+            hp, 
+            damage,
+            hasTesla: weaponType === 'tesla',
+            traits: traits || null,
+            abilities: traits ? [traits] : []
+          };
+          
+          party.push(member);
           document.getElementById('party-name').value = '';
           renderParty();
         }
@@ -1206,7 +1237,7 @@ app.get('/travel', (c) => {
         {/* Wagon Problems Simulator */}
         <div class="bg-yellow-50 border-2 border-yellow-300 rounded-xl p-6 mb-8">
           <h3 class="font-bold text-yellow-800 mb-4">
-            <i class="fas fa-tools mr-2"></i>Wagon Problem Roll
+            <i class="fas fa-tools mr-2"></i>Wagon Problem Roll (Terrain Check)
           </h3>
           <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-4">
             <div>
@@ -1233,6 +1264,32 @@ app.get('/travel', (c) => {
           </div>
           <div id="wagon-result" class="p-4 bg-white rounded-lg hidden">
             <p id="wagon-result-text" class="font-bold"></p>
+          </div>
+        </div>
+
+        {/* Standalone Wagon Repair */}
+        <div class="bg-orange-50 border-2 border-orange-300 rounded-xl p-6 mb-8">
+          <h3 class="font-bold text-orange-800 mb-4">
+            <i class="fas fa-wrench mr-2"></i>Attempt Wagon Repair (Wagon Already Broken)
+          </h3>
+          <p class="text-sm text-orange-700 mb-4">Use this when the wagon is already damaged and you need to attempt a repair without rolling for terrain damage.</p>
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+            <div>
+              <label class="block text-sm font-medium text-orange-800 mb-2">Mechanical Skill</label>
+              <select id="repair-mechanical-level" class="w-full px-4 py-2 border rounded-lg">
+                <option value="0">None (10% repair chance)</option>
+                <option value="1">Mechanical 1 (50% repair chance)</option>
+                <option value="3">Mechanical 3 (95% repair chance)</option>
+              </select>
+            </div>
+            <div class="flex items-end">
+              <button onclick="attemptRepair()" class="w-full bg-orange-600 text-white py-2 rounded-lg font-bold hover:bg-orange-700 transition">
+                <i class="fas fa-wrench mr-2"></i>Attempt Repair
+              </button>
+            </div>
+          </div>
+          <div id="repair-result" class="p-4 bg-white rounded-lg hidden">
+            <p id="repair-result-text" class="font-bold"></p>
           </div>
         </div>
 
@@ -1352,6 +1409,35 @@ app.get('/travel', (c) => {
               resultText.className = 'font-bold text-red-700';
               resultText.textContent = '❌ Wagon broke down and REPAIR FAILED! Lose 1 day. (Problem roll: ' + data.roll + ', Repair roll: ' + data.repairResult.roll + ' vs ' + data.repairResult.chance + '%)';
             }
+          }
+        }
+        
+        async function attemptRepair() {
+          const mechLevel = parseInt(document.getElementById('repair-mechanical-level').value);
+          
+          const res = await fetch('/api/repair-wagon', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+              hasMechanical: mechLevel > 0,
+              mechanicalLevel: mechLevel
+            })
+          });
+          
+          const data = await res.json();
+          const resultDiv = document.getElementById('repair-result');
+          const resultText = document.getElementById('repair-result-text');
+          
+          resultDiv.classList.remove('hidden');
+          
+          if (data.success) {
+            resultDiv.className = 'p-4 bg-green-100 rounded-lg';
+            resultText.className = 'font-bold text-green-700';
+            resultText.textContent = '✅ REPAIR SUCCESSFUL! (Rolled ' + data.roll + ' vs ' + data.chance + '% repair chance)';
+          } else {
+            resultDiv.className = 'p-4 bg-red-100 rounded-lg';
+            resultText.className = 'font-bold text-red-700';
+            resultText.textContent = '❌ REPAIR FAILED! Lose 1 day. (Rolled ' + data.roll + ' vs ' + data.chance + '% repair chance)';
           }
         }
         

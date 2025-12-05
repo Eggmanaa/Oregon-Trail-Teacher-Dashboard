@@ -330,14 +330,50 @@ api.post('/wagon-roll', async (c) => {
   })
 })
 
+// Standalone wagon repair (no terrain check)
+api.post('/repair-wagon', async (c) => {
+  const body = await c.req.json()
+  const { hasMechanical, mechanicalLevel } = body
+  
+  let repairChance = WAGON_PROBLEMS.repairChance.noMechanical
+  if (hasMechanical) {
+    repairChance = mechanicalLevel >= 3 
+      ? WAGON_PROBLEMS.repairChance.mechanical3 
+      : WAGON_PROBLEMS.repairChance.mechanical1
+  }
+  
+  const roll = Math.floor(Math.random() * 100) + 1
+  const success = roll <= repairChance
+  
+  return c.json({
+    roll,
+    chance: repairChance,
+    success
+  })
+})
+
+// Tesla Gun results table
+const TESLA_RESULTS = [
+  { roll: 1, effect: 'backfire_user', damage: 2, desc: 'Gun backfires! User takes 2 damage!' },
+  { roll: 2, effect: 'backfire_party', damage: 1, desc: 'Electrical surge! Random party member takes 1 damage!' },
+  { roll: 3, effect: 'miss', damage: 0, desc: 'Shot goes wide - no effect' },
+  { roll: 4, effect: 'hit', damage: 1, desc: 'Grazing hit for 1 damage' },
+  { roll: 5, effect: 'hit', damage: 2, desc: 'Solid hit for 2 damage' },
+  { roll: 6, effect: 'hit', damage: 3, desc: 'Powerful blast for 3 damage' },
+  { roll: 7, effect: 'hit', damage: 4, desc: 'Devastating shock for 4 damage' },
+  { roll: 8, effect: 'chain', damage: 2, desc: 'Chain lightning! 2 damage to all enemies!' },
+  { roll: 9, effect: 'stun', damage: 3, desc: 'Stunning blast! 3 damage and enemy stunned!' },
+  { roll: 10, effect: 'kill', damage: 99, desc: 'CRITICAL OVERLOAD! Instant kill!' }
+]
+
 // Simulate combat
 api.post('/simulate-combat', async (c) => {
   const body = await c.req.json()
   const { party, enemies } = body
   
   // Clone combatants for simulation
-  const partyMembers = party.map((p: any) => ({ ...p, currentHp: p.hp }))
-  const enemyForces = enemies.map((e: any) => ({ ...e, currentHp: e.hp }))
+  const partyMembers = party.map((p: any) => ({ ...p, currentHp: p.hp, stunned: false }))
+  const enemyForces = enemies.map((e: any) => ({ ...e, currentHp: e.hp, stunned: false }))
   
   const battleLog: string[] = []
   let round = 0
@@ -355,30 +391,103 @@ api.post('/simulate-combat', async (c) => {
     
     // Party attacks
     for (const member of aliveParty) {
-      if (aliveEnemies.filter((e: any) => e.currentHp > 0).length === 0) break
+      if (enemyForces.filter((e: any) => e.currentHp > 0).length === 0) break
       
-      const target = aliveEnemies.find((e: any) => e.currentHp > 0)
+      const target = enemyForces.find((e: any) => e.currentHp > 0)
       if (!target) break
       
-      const attackRoll = Math.floor(Math.random() * 6) + 1
-      const damage = member.damage || 1
-      const hitChance = 4 // Need 4+ to hit
-      
-      if (attackRoll >= hitChance) {
-        const actualDamage = target.abilities?.includes('Tough') ? Math.ceil(damage / 2) : damage
-        target.currentHp -= actualDamage
-        battleLog.push(`${member.name} hits ${target.name} for ${actualDamage} damage! (${target.currentHp}hp left)`)
+      // Check if using Tesla Gun
+      if (member.hasTesla) {
+        const teslaRoll = Math.floor(Math.random() * 10) + 1
+        const teslaResult = TESLA_RESULTS.find(t => t.roll === teslaRoll)!
         
-        if (target.currentHp <= 0) {
-          battleLog.push(`${target.name} is defeated!`)
+        battleLog.push(`${member.name} fires Tesla Gun! (Rolled ${teslaRoll})`)
+        
+        // Check for Famous Inventor immunity to self-damage
+        const hasImmunity = member.abilities?.includes('famous_inventor')
+        
+        if (teslaResult.effect === 'backfire_user') {
+          if (hasImmunity) {
+            battleLog.push(`  ⚡ Gun backfires but ${member.name} is immune (Famous Inventor)!`)
+          } else {
+            member.currentHp -= teslaResult.damage
+            battleLog.push(`  ⚡ ${teslaResult.desc} (${member.currentHp}hp left)`)
+            if (member.currentHp <= 0) battleLog.push(`  ${member.name} falls from their own weapon!`)
+          }
+        } else if (teslaResult.effect === 'backfire_party') {
+          if (hasImmunity) {
+            battleLog.push(`  ⚡ Electrical surge but ${member.name} redirects it safely!`)
+          } else {
+            const randomAlly = aliveParty[Math.floor(Math.random() * aliveParty.length)]
+            randomAlly.currentHp -= teslaResult.damage
+            battleLog.push(`  ⚡ ${teslaResult.desc} ${randomAlly.name} hit! (${randomAlly.currentHp}hp left)`)
+          }
+        } else if (teslaResult.effect === 'miss') {
+          battleLog.push(`  ⚡ ${teslaResult.desc}`)
+        } else if (teslaResult.effect === 'chain') {
+          battleLog.push(`  ⚡ ${teslaResult.desc}`)
+          for (const e of enemyForces.filter((e: any) => e.currentHp > 0)) {
+            e.currentHp -= teslaResult.damage
+            battleLog.push(`    ${e.name} takes ${teslaResult.damage} damage! (${e.currentHp}hp left)`)
+            if (e.currentHp <= 0) battleLog.push(`    ${e.name} is defeated!`)
+          }
+        } else if (teslaResult.effect === 'stun') {
+          target.currentHp -= teslaResult.damage
+          target.stunned = true
+          battleLog.push(`  ⚡ ${teslaResult.desc} ${target.name} (${target.currentHp}hp left)`)
+          if (target.currentHp <= 0) battleLog.push(`  ${target.name} is defeated!`)
+        } else if (teslaResult.effect === 'kill') {
+          target.currentHp = 0
+          battleLog.push(`  ⚡ ${teslaResult.desc} ${target.name} is VAPORIZED!`)
+        } else {
+          const actualDamage = target.abilities?.includes('Tough') ? Math.ceil(teslaResult.damage / 2) : teslaResult.damage
+          target.currentHp -= actualDamage
+          battleLog.push(`  ⚡ ${teslaResult.desc} ${target.name} (${target.currentHp}hp left)`)
+          if (target.currentHp <= 0) battleLog.push(`  ${target.name} is defeated!`)
         }
       } else {
-        battleLog.push(`${member.name} misses ${target.name}!`)
+        // Normal weapon attack
+        let attackRoll = Math.floor(Math.random() * 6) + 1
+        let damage = member.damage || 1
+        let hitChance = 4 // Need 4+ to hit
+        
+        // Apply traits
+        if (member.abilities?.includes('bravery')) {
+          hitChance = 3 // Easier to hit
+          battleLog.push(`  (${member.name} has Bravery: +1 to hit)`)
+        }
+        if (member.abilities?.includes('weapons')) {
+          damage += 1
+        }
+        if (member.abilities?.includes('lucky') && attackRoll < hitChance) {
+          const reroll = Math.floor(Math.random() * 6) + 1
+          battleLog.push(`  (${member.name} is Lucky: rerolling ${attackRoll} -> ${reroll})`)
+          attackRoll = reroll
+        }
+        
+        if (attackRoll >= hitChance) {
+          const actualDamage = target.abilities?.includes('Tough') ? Math.ceil(damage / 2) : damage
+          target.currentHp -= actualDamage
+          battleLog.push(`${member.name} hits ${target.name} for ${actualDamage} damage! (${target.currentHp}hp left)`)
+          
+          if (target.currentHp <= 0) {
+            battleLog.push(`${target.name} is defeated!`)
+          }
+        } else {
+          battleLog.push(`${member.name} misses ${target.name}!`)
+        }
       }
     }
     
     // Enemy attacks
     for (const enemy of enemyForces.filter((e: any) => e.currentHp > 0)) {
+      // Skip if stunned
+      if (enemy.stunned) {
+        battleLog.push(`${enemy.name} is stunned and cannot attack!`)
+        enemy.stunned = false
+        continue
+      }
+      
       const aliveTargets = partyMembers.filter((p: any) => p.currentHp > 0)
       if (aliveTargets.length === 0) break
       
@@ -387,9 +496,12 @@ api.post('/simulate-combat', async (c) => {
       const damage = enemy.damage || 1
       
       if (attackRoll >= 4) {
-        const actualDamage = target.abilities?.includes('Tough') ? Math.ceil(damage / 2) : damage
+        // Check if target has Tough trait
+        const hasTough = target.abilities?.includes('tough') || target.abilities?.includes('Tough')
+        const actualDamage = hasTough ? Math.ceil(damage / 2) : damage
         target.currentHp -= actualDamage
-        battleLog.push(`${enemy.name} hits ${target.name} for ${actualDamage} damage! (${target.currentHp}hp left)`)
+        const toughNote = hasTough ? ' (Tough: half damage)' : ''
+        battleLog.push(`${enemy.name} hits ${target.name} for ${actualDamage} damage!${toughNote} (${target.currentHp}hp left)`)
         
         if (target.currentHp <= 0) {
           battleLog.push(`${target.name} falls in battle!`)
