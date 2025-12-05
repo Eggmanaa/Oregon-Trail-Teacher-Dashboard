@@ -332,7 +332,7 @@ app.get('/new-game', (c) => {
           <div id="form-success" class="hidden mb-4 p-4 bg-green-100 text-green-700 rounded-lg"></div>
 
           <div class="flex gap-4">
-            <button type="submit" id="submit-btn" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition">
+            <button type="button" id="submit-btn" onclick="submitNewGameForm()" class="flex-1 bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition">
               <i class="fas fa-flag-checkered mr-2"></i>Create Simulation
             </button>
             <a href="/" class="px-6 py-3 border rounded-lg hover:bg-gray-50 transition text-center">Cancel</a>
@@ -355,11 +355,31 @@ app.get('/new-game', (c) => {
         numTrainsInput.addEventListener('change', updateWagonInputs);
         updateWagonInputs();
         
-        document.getElementById('new-game-form').addEventListener('submit', async (e) => {
-          e.preventDefault();
+        let isSubmitting = false;
+        
+        async function submitNewGameForm() {
+          // Prevent double submission
+          if (isSubmitting) {
+            console.log('Form already submitting, ignoring duplicate submit');
+            return;
+          }
+          isSubmitting = true;
+          
           const btn = document.getElementById('submit-btn');
           const errorDiv = document.getElementById('form-error');
           const successDiv = document.getElementById('form-success');
+          
+          // Validate required fields
+          const className = document.getElementById('className').value.trim();
+          const period = document.getElementById('period').value.trim();
+          const startDate = document.getElementById('startDate').value;
+          
+          if (!className || !period || !startDate) {
+            errorDiv.textContent = 'Please fill in all required fields.';
+            errorDiv.classList.remove('hidden');
+            isSubmitting = false;
+            return;
+          }
           
           btn.disabled = true;
           btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Creating...';
@@ -378,9 +398,9 @@ app.get('/new-game', (c) => {
               method: 'POST',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
-                className: document.getElementById('className').value,
-                period: document.getElementById('period').value,
-                startDate: document.getElementById('startDate').value,
+                className: className,
+                period: period,
+                startDate: startDate,
                 numTrains: numTrains,
                 wagonNames: wagonNames
               })
@@ -398,6 +418,15 @@ app.get('/new-game', (c) => {
             errorDiv.classList.remove('hidden');
             btn.disabled = false;
             btn.innerHTML = '<i class="fas fa-flag-checkered mr-2"></i>Create Simulation';
+            isSubmitting = false;
+          }
+        }
+        
+        // Also handle Enter key in form fields
+        document.getElementById('new-game-form').addEventListener('keypress', function(e) {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            submitNewGameForm();
           }
         });
       `}} />
