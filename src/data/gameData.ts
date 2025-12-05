@@ -617,6 +617,167 @@ export const TESLA_GUN_RESULTS = [
   { roll: 10, result: "EXPLODES! 5 fighters destroyed", note: "Famous Inventor immune" }
 ];
 
+// Native American Relations System
+// Scale: -3 (Hostile) to +3 (Allied), 0 is Neutral
+export const NATIVE_RELATIONS = {
+  levels: [
+    { 
+      level: -3, 
+      name: "Hostile", 
+      icon: "💀",
+      color: "red-800",
+      barterPenalty: 100, // Cannot barter at all
+      description: "War parties actively hunting settlers",
+      effects: [
+        "Cannot trade at Native villages",
+        "50% chance of raiding party attack when camping (d100 roll 1-50)",
+        "Native warriors may join enemy forces in battles",
+        "Lose 2 days avoiding hostile territory"
+      ],
+      raidChance: 50,
+      battleReinforcements: true
+    },
+    { 
+      level: -2, 
+      name: "Unfriendly", 
+      icon: "😠",
+      color: "red-600",
+      barterPenalty: 50, // +50% barter cost
+      description: "Tribes are suspicious and unwelcoming",
+      effects: [
+        "Barter costs +50% more",
+        "25% chance of raiding party attack when camping (d100 roll 1-25)",
+        "No access to village activities",
+        "Lose 1 day navigating around villages"
+      ],
+      raidChance: 25,
+      battleReinforcements: false
+    },
+    { 
+      level: -1, 
+      name: "Wary", 
+      icon: "😐",
+      color: "orange-500",
+      barterPenalty: 25, // +25% barter cost
+      description: "Tribes are cautious but will trade",
+      effects: [
+        "Barter costs +25% more",
+        "10% chance of raiding party encounter (d100 roll 1-10)",
+        "Limited village activities available"
+      ],
+      raidChance: 10,
+      battleReinforcements: false
+    },
+    { 
+      level: 0, 
+      name: "Neutral", 
+      icon: "🤝",
+      color: "gray-500",
+      barterPenalty: 0, // Normal barter
+      description: "Standard relations - cautious respect",
+      effects: [
+        "Normal barter rates",
+        "All village activities available",
+        "No special bonuses or penalties"
+      ],
+      raidChance: 0,
+      battleReinforcements: false
+    },
+    { 
+      level: 1, 
+      name: "Friendly", 
+      icon: "😊",
+      color: "green-500",
+      barterBonus: 10, // -10% barter cost
+      description: "Tribes welcome travelers",
+      effects: [
+        "Barter costs -10% less",
+        "Access to special village items",
+        "Can request guide (+2 travel speed for 1 leg)"
+      ],
+      raidChance: 0,
+      battleReinforcements: false
+    },
+    { 
+      level: 2, 
+      name: "Trusted", 
+      icon: "🙏",
+      color: "green-600",
+      barterBonus: 25, // -25% barter cost
+      description: "Strong bonds with local tribes",
+      effects: [
+        "Barter costs -25% less",
+        "Can trade for horses at reduced rates",
+        "25% chance of warning about dangers ahead (d100 roll 1-25)",
+        "Can request healing from shaman (free)"
+      ],
+      raidChance: 0,
+      battleReinforcements: false
+    },
+    { 
+      level: 3, 
+      name: "Allied", 
+      icon: "⚔️",
+      color: "green-800",
+      barterBonus: 50, // -50% barter cost
+      description: "Blood brothers - tribes will fight alongside you",
+      effects: [
+        "Barter costs -50% less",
+        "50% chance of Native warriors joining your battles (d100 roll 1-50)",
+        "If aided: 1d4 warriors join (HP: 4, Damage: 2, Abilities: Bravery, Travel)",
+        "Free lodging and food at villages",
+        "Tribe may gift horses or supplies"
+      ],
+      raidChance: 0,
+      battleReinforcements: true,
+      allyChance: 50
+    }
+  ],
+  
+  // Native warrior stats for battles
+  nativeWarrior: {
+    name: "Native Warrior",
+    hp: 4,
+    damage: 2,
+    abilities: ["Bravery", "Travel"]
+  },
+  
+  // Raiding party stats
+  raidingParty: {
+    small: { warriors: 2, name: "Small Raiding Party" },
+    medium: { warriors: 4, name: "Raiding Party" },
+    large: { warriors: 6, name: "War Party" }
+  },
+  
+  // Actions that affect relations
+  relationChanges: {
+    positive: [
+      { action: "Help injured Native", change: 1 },
+      { action: "Fair trade (overpay)", change: 1 },
+      { action: "Return lost item", change: 1 },
+      { action: "Defend village from bandits", change: 2 },
+      { action: "Missionary converts tribe (peaceful)", change: 1 },
+      { action: "Share medicine/supplies", change: 1 }
+    ],
+    negative: [
+      { action: "Steal from village", change: -2 },
+      { action: "Attack Native", change: -2 },
+      { action: "Desecrate burial ground", change: -3 },
+      { action: "Cheat in trade", change: -1 },
+      { action: "Trespass on sacred land", change: -1 },
+      { action: "Kill Native (even in combat)", change: -1 }
+    ]
+  }
+};
+
+// Native enemies for combat
+export const NATIVE_ENEMIES = [
+  { name: "Native Scout", hp: 3, damage: 1, abilities: ["Travel"], vp: 10 },
+  { name: "Native Warrior", hp: 4, damage: 2, abilities: ["Bravery"], vp: 20 },
+  { name: "Native Brave", hp: 5, damage: 2, abilities: ["Bravery", "Tough"], vp: 30 },
+  { name: "War Chief", hp: 6, damage: 3, abilities: ["Bravery", "Tough", "Leadership"], vp: 50 }
+];
+
 // Victory Points
 export const VP_REWARDS = {
   reachOregon: 500,

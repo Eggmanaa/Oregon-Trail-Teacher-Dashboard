@@ -47,8 +47,15 @@ export const renderer = jsxRenderer(({ children, title }) => {
           }
         `}</script>
       </head>
-      <body class="bg-gray-100 min-h-screen">
-        {children}
+      <body class="bg-gray-100 min-h-screen relative">
+        {/* Oregon Trail Background - All Pages */}
+        <div 
+          class="fixed inset-0 z-0"
+          style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/0d/Emigrants_Crossing_the_Plains%2C_or_The_Oregon_Trail_%28Albert_Bierstadt%29%2C_1869.jpg'); background-size: cover; background-position: center;"
+        ></div>
+        <div class="relative z-10">
+          {children}
+        </div>
         <script src="/static/app.js"></script>
       </body>
     </html>

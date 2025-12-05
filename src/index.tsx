@@ -7,7 +7,7 @@ import {
   RANDOM_EVENTS, HUNTING_RESULTS, FISHING_RESULTS, ENEMIES,
   STATUS_EFFECTS, SKILLS, VP_REWARDS, TRADING_POSTS, NATIVE_VILLAGES,
   TREASURES, TESLA_GUN_RESULTS, HEALTH_LEVELS, FUND_LEVELS,
-  WAGON_PROBLEMS, BARTER_ITEMS
+  WAGON_PROBLEMS, BARTER_ITEMS, NATIVE_RELATIONS, NATIVE_ENEMIES
 } from './data/gameData'
 
 type Bindings = { DB: D1Database }
@@ -35,13 +35,7 @@ app.get('/', async (c) => {
   }
   
   return c.render(
-    <div class="min-h-screen relative">
-      {/* Background Image - Full visibility */}
-      <div 
-        class="fixed inset-0 z-0"
-        style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/0d/Emigrants_Crossing_the_Plains%2C_or_The_Oregon_Trail_%28Albert_Bierstadt%29%2C_1869.jpg'); background-size: cover; background-position: center;"
-      ></div>
-      <div class="relative z-10">
+    <div class="min-h-screen">
       <header class="wagon-trail text-white py-6 px-8 shadow-lg">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
           <div class="flex items-center gap-4">
@@ -54,6 +48,9 @@ app.get('/', async (c) => {
           <nav class="flex gap-4">
             <a href="/new-game" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition flex items-center gap-2">
               <i class="fas fa-plus"></i> New Game
+            </a>
+            <a href="/native-relations" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition flex items-center gap-2">
+              <i class="fas fa-feather-alt"></i> Native Relations
             </a>
             <a href="/worksheet" class="bg-white/20 hover:bg-white/30 px-4 py-2 rounded-lg transition flex items-center gap-2">
               <i class="fas fa-file-alt"></i> Worksheet
@@ -201,7 +198,6 @@ app.get('/', async (c) => {
           </div>
         </div>
       </main>
-      </div>
     </div>,
     { title: 'Oregon Trail - Dashboard' }
   )
@@ -1072,12 +1068,40 @@ app.get('/combat', (c) => {
             <div class="border-t border-gray-600 pt-4">
               <h3 class="font-medium mb-2">Add Enemy</h3>
               <select id="enemy-select" class="w-full px-3 py-2 bg-gray-800 border border-gray-600 rounded mb-2">
-                {ENEMIES.map(e => (
-                  <option value={JSON.stringify(e)}>{e.name} (HP: {e.hp}, Dmg: {e.damage})</option>
-                ))}
+                <optgroup label="Standard Enemies">
+                  {ENEMIES.map(e => (
+                    <option value={JSON.stringify(e)}>{e.name} (HP: {e.hp}, Dmg: {e.damage})</option>
+                  ))}
+                </optgroup>
+                <optgroup label="🪶 Native Americans (Hostile Relations)">
+                  {NATIVE_ENEMIES.map(e => (
+                    <option value={JSON.stringify(e)}>🪶 {e.name} (HP: {e.hp}, Dmg: {e.damage})</option>
+                  ))}
+                </optgroup>
               </select>
               <button onclick="addEnemy()" class="w-full bg-red-600 hover:bg-red-700 px-4 py-2 rounded">
                 <i class="fas fa-plus mr-1"></i> Add Enemy
+              </button>
+            </div>
+          </div>
+        </div>
+
+        {/* Native Allies Section */}
+        <div class="bg-amber-900/60 backdrop-blur-sm rounded-xl p-4 mb-8">
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-3">
+              <span class="text-3xl">🪶</span>
+              <div>
+                <h3 class="font-bold text-amber-100">Native American Allies</h3>
+                <p class="text-amber-200 text-sm">Add allied warriors when at +3 Relations (50% chance, 1d4 warriors)</p>
+              </div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="addNativeAlly(1)" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded text-sm">
+                +1 Warrior
+              </button>
+              <button onclick="addNativeAlly(4)" class="bg-amber-600 hover:bg-amber-700 text-white px-3 py-2 rounded text-sm">
+                +1d4 Warriors
               </button>
             </div>
           </div>
@@ -1137,8 +1161,10 @@ app.get('/combat', (c) => {
           list.innerHTML = party.map((p, i) => {
             const traits = p.traits ? ' [' + p.traits + ']' : '';
             const weapon = p.hasTesla ? '⚡Tesla' : 'Dmg:' + p.damage;
-            return '<div class="flex items-center justify-between bg-blue-900/50 p-2 rounded">' +
-              '<span>' + p.name + ' (HP:' + p.hp + ', ' + weapon + ')' + traits + '</span>' +
+            const isNative = p.isNativeAlly ? '🪶 ' : '';
+            const bgClass = p.isNativeAlly ? 'bg-amber-900/50' : 'bg-blue-900/50';
+            return '<div class="flex items-center justify-between ' + bgClass + ' p-2 rounded">' +
+              '<span>' + isNative + p.name + ' (HP:' + p.hp + ', ' + weapon + ')' + traits + '</span>' +
               '<button onclick="removeParty(' + i + ')" class="text-red-400 hover:text-red-300"><i class="fas fa-times"></i></button>' +
               '</div>';
           }).join('');
@@ -1181,6 +1207,28 @@ app.get('/combat', (c) => {
           const enemy = JSON.parse(select.value);
           enemies.push({ ...enemy });
           renderEnemies();
+        }
+        
+        function addNativeAlly(count) {
+          let numWarriors = count;
+          if (count === 4) {
+            // Roll 1d4
+            numWarriors = Math.floor(Math.random() * 4) + 1;
+            alert('Rolled 1d4: ' + numWarriors + ' Native Warrior(s) join your party!');
+          }
+          
+          for (let i = 0; i < numWarriors; i++) {
+            party.push({
+              name: 'Native Warrior',
+              hp: 4,
+              damage: 2,
+              hasTesla: false,
+              traits: 'bravery',
+              abilities: ['bravery', 'Travel'],
+              isNativeAlly: true
+            });
+          }
+          renderParty();
         }
         
         function removeParty(i) { party.splice(i, 1); renderParty(); }
@@ -1853,6 +1901,327 @@ app.get('/reference', (c) => {
       </main>
     </div>,
     { title: 'Reference Guide - Oregon Trail' }
+  )
+})
+
+// Native American Relations Page
+app.get('/native-relations', (c) => {
+  return c.render(
+    <div class="min-h-screen">
+      <header class="wagon-trail text-white py-4 px-8">
+        <div class="max-w-7xl mx-auto flex items-center gap-4">
+          <a href="/" class="text-white/70 hover:text-white transition"><i class="fas fa-arrow-left"></i></a>
+          <h1 class="text-2xl font-bold"><i class="fas fa-feather-alt mr-2"></i>Native American Relations</h1>
+        </div>
+      </header>
+
+      <main class="max-w-6xl mx-auto p-8">
+        {/* Relations Meter Control */}
+        <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
+            <i class="fas fa-sliders-h text-purple-600"></i> Universal Relations Meter
+          </h2>
+          <p class="text-sm text-gray-600 mb-6">
+            Control the overall relationship between settlers and Native American tribes. This affects all trading, encounters, and potential conflicts.
+          </p>
+          
+          {/* Relations Slider */}
+          <div class="mb-6">
+            <div class="flex justify-between text-sm mb-2">
+              <span class="text-red-600 font-bold">💀 Hostile</span>
+              <span class="text-gray-500 font-bold">🤝 Neutral</span>
+              <span class="text-green-600 font-bold">⚔️ Allied</span>
+            </div>
+            <input 
+              type="range" 
+              id="relations-slider" 
+              min="-3" 
+              max="3" 
+              value="0" 
+              class="w-full h-3 rounded-lg appearance-none cursor-pointer"
+              style="background: linear-gradient(to right, #991b1b, #dc2626, #f97316, #6b7280, #22c55e, #16a34a, #166534);"
+            />
+            <div class="flex justify-between text-xs text-gray-400 mt-1">
+              <span>-3</span>
+              <span>-2</span>
+              <span>-1</span>
+              <span>0</span>
+              <span>+1</span>
+              <span>+2</span>
+              <span>+3</span>
+            </div>
+          </div>
+
+          {/* Current Status Display */}
+          <div id="relations-status" class="p-6 rounded-xl text-center bg-gray-100">
+            <div class="text-6xl mb-2" id="status-icon">🤝</div>
+            <h3 class="text-2xl font-bold" id="status-name">Neutral</h3>
+            <p class="text-gray-600" id="status-description">Standard relations - cautious respect</p>
+          </div>
+        </div>
+
+        {/* Current Effects */}
+        <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">Current Effects</h2>
+          <div id="effects-list" class="space-y-2">
+            <div class="p-3 bg-gray-50 rounded-lg text-sm">• Normal barter rates</div>
+            <div class="p-3 bg-gray-50 rounded-lg text-sm">• All village activities available</div>
+            <div class="p-3 bg-gray-50 rounded-lg text-sm">• No special bonuses or penalties</div>
+          </div>
+        </div>
+
+        {/* Roll Checks Section */}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          {/* Raid Check */}
+          <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-red-700 mb-4">
+              <i class="fas fa-exclamation-triangle mr-2"></i>Raid Encounter Check
+            </h3>
+            <p class="text-sm text-gray-600 mb-4">
+              Roll when camping in territory. Only applies at Wary (-1) or worse relations.
+            </p>
+            <div class="text-center mb-4">
+              <div id="raid-chance" class="text-3xl font-bold text-gray-400">0%</div>
+              <p class="text-sm text-gray-500">Raid Chance</p>
+            </div>
+            <button 
+              onclick="rollRaidCheck()"
+              id="raid-roll-btn"
+              disabled
+              class="w-full bg-red-600 text-white py-3 rounded-lg font-bold hover:bg-red-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              <i class="fas fa-dice mr-2"></i>Roll d100 for Raid
+            </button>
+            <div id="raid-result" class="mt-4 p-4 rounded-lg hidden"></div>
+          </div>
+
+          {/* Allied Aid Check */}
+          <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-green-700 mb-4">
+              <i class="fas fa-hands-helping mr-2"></i>Allied Aid Check
+            </h3>
+            <p class="text-sm text-gray-600 mb-4">
+              Roll before battle to see if Native allies join. Only applies at Allied (+3) relations.
+            </p>
+            <div class="text-center mb-4">
+              <div id="ally-chance" class="text-3xl font-bold text-gray-400">0%</div>
+              <p class="text-sm text-gray-500">Aid Chance</p>
+            </div>
+            <button 
+              onclick="rollAllyCheck()"
+              id="ally-roll-btn"
+              disabled
+              class="w-full bg-green-600 text-white py-3 rounded-lg font-bold hover:bg-green-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+            >
+              <i class="fas fa-dice mr-2"></i>Roll d100 for Aid
+            </button>
+            <div id="ally-result" class="mt-4 p-4 rounded-lg hidden"></div>
+          </div>
+        </div>
+
+        {/* Relations Reference Table */}
+        <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6 mb-8">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">Relations Reference</h2>
+          <div class="overflow-x-auto">
+            <table class="w-full text-sm">
+              <thead>
+                <tr class="bg-gray-100">
+                  <th class="px-4 py-2 text-left">Level</th>
+                  <th class="px-4 py-2 text-left">Status</th>
+                  <th class="px-4 py-2 text-left">Barter Effect</th>
+                  <th class="px-4 py-2 text-left">Raid Chance</th>
+                  <th class="px-4 py-2 text-left">Special</th>
+                </tr>
+              </thead>
+              <tbody>
+                {NATIVE_RELATIONS.levels.map(level => (
+                  <tr class={`border-b ${level.level < 0 ? 'bg-red-50' : level.level > 0 ? 'bg-green-50' : 'bg-gray-50'}`}>
+                    <td class="px-4 py-2 font-bold">{level.level > 0 ? '+' : ''}{level.level}</td>
+                    <td class="px-4 py-2">
+                      <span class="text-xl mr-2">{level.icon}</span>
+                      <span class="font-medium">{level.name}</span>
+                    </td>
+                    <td class="px-4 py-2">
+                      {level.barterPenalty ? 
+                        <span class="text-red-600">+{level.barterPenalty}% cost</span> : 
+                        level.barterBonus ? 
+                        <span class="text-green-600">-{level.barterBonus}% cost</span> : 
+                        <span class="text-gray-500">Normal</span>
+                      }
+                    </td>
+                    <td class="px-4 py-2">
+                      {level.raidChance > 0 ? 
+                        <span class="text-red-600 font-bold">{level.raidChance}%</span> : 
+                        <span class="text-gray-400">None</span>
+                      }
+                    </td>
+                    <td class="px-4 py-2 text-xs">
+                      {level.level === 3 && <span class="text-green-600">50% chance warriors join battle</span>}
+                      {level.level === -3 && <span class="text-red-600">Warriors may join enemies</span>}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        {/* Actions That Change Relations */}
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+          <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-green-700 mb-4">
+              <i class="fas fa-plus-circle mr-2"></i>Actions That Improve Relations
+            </h3>
+            <div class="space-y-2">
+              {NATIVE_RELATIONS.relationChanges.positive.map(item => (
+                <div class="flex justify-between p-2 bg-green-50 rounded">
+                  <span>{item.action}</span>
+                  <span class="font-bold text-green-600">+{item.change}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+          <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
+            <h3 class="text-lg font-bold text-red-700 mb-4">
+              <i class="fas fa-minus-circle mr-2"></i>Actions That Harm Relations
+            </h3>
+            <div class="space-y-2">
+              {NATIVE_RELATIONS.relationChanges.negative.map(item => (
+                <div class="flex justify-between p-2 bg-red-50 rounded">
+                  <span>{item.action}</span>
+                  <span class="font-bold text-red-600">{item.change}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+
+        {/* Native Combatants Reference */}
+        <div class="bg-white/90 backdrop-blur-sm rounded-xl shadow-lg p-6">
+          <h2 class="text-xl font-bold text-gray-800 mb-4">Native Combatants (for Battle Simulator)</h2>
+          <p class="text-sm text-gray-600 mb-4">Use these when Native Americans join battles - either as allies (+3 relations) or enemies (-3 relations).</p>
+          <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+            {NATIVE_ENEMIES.map(enemy => (
+              <div class="bg-amber-50 border border-amber-200 rounded-lg p-4 text-center">
+                <div class="text-2xl mb-2">🪶</div>
+                <h4 class="font-bold text-amber-800">{enemy.name}</h4>
+                <p class="text-sm">HP: {enemy.hp} | Dmg: {enemy.damage}</p>
+                <p class="text-xs text-amber-600">{enemy.abilities.join(', ')}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </main>
+
+      <script dangerouslySetInnerHTML={{__html: `
+        const relationsData = ${JSON.stringify(NATIVE_RELATIONS.levels)};
+        const slider = document.getElementById('relations-slider');
+        
+        function updateRelationsDisplay() {
+          const level = parseInt(slider.value);
+          const data = relationsData.find(r => r.level === level);
+          
+          document.getElementById('status-icon').textContent = data.icon;
+          document.getElementById('status-name').textContent = data.name;
+          document.getElementById('status-name').className = 'text-2xl font-bold text-' + data.color;
+          document.getElementById('status-description').textContent = data.description;
+          
+          // Update effects list
+          const effectsList = document.getElementById('effects-list');
+          effectsList.innerHTML = data.effects.map(e => 
+            '<div class="p-3 ' + (level < 0 ? 'bg-red-50' : level > 0 ? 'bg-green-50' : 'bg-gray-50') + ' rounded-lg text-sm">• ' + e + '</div>'
+          ).join('');
+          
+          // Update status box color
+          const statusBox = document.getElementById('relations-status');
+          statusBox.className = 'p-6 rounded-xl text-center ' + 
+            (level < 0 ? 'bg-red-100' : level > 0 ? 'bg-green-100' : 'bg-gray-100');
+          
+          // Update raid chance
+          document.getElementById('raid-chance').textContent = data.raidChance + '%';
+          document.getElementById('raid-roll-btn').disabled = data.raidChance === 0;
+          
+          // Update ally chance
+          const allyChance = data.allyChance || 0;
+          document.getElementById('ally-chance').textContent = allyChance + '%';
+          document.getElementById('ally-roll-btn').disabled = allyChance === 0;
+          
+          // Clear previous results
+          document.getElementById('raid-result').classList.add('hidden');
+          document.getElementById('ally-result').classList.add('hidden');
+        }
+        
+        function rollRaidCheck() {
+          const level = parseInt(slider.value);
+          const data = relationsData.find(r => r.level === level);
+          const roll = Math.floor(Math.random() * 100) + 1;
+          const isRaid = roll <= data.raidChance;
+          
+          const resultDiv = document.getElementById('raid-result');
+          resultDiv.classList.remove('hidden');
+          
+          if (isRaid) {
+            // Determine raid size
+            let raidSize = 'Small Raiding Party (2 warriors)';
+            if (roll <= data.raidChance / 3) {
+              raidSize = 'War Party (6 warriors)';
+            } else if (roll <= data.raidChance / 2) {
+              raidSize = 'Raiding Party (4 warriors)';
+            }
+            
+            resultDiv.className = 'mt-4 p-4 rounded-lg bg-red-100';
+            resultDiv.innerHTML = '<div class="text-center">' +
+              '<div class="text-4xl mb-2">⚔️</div>' +
+              '<p class="font-bold text-red-700">RAID! Rolled ' + roll + ' (needed ' + data.raidChance + ' or less)</p>' +
+              '<p class="text-red-600 mt-2">' + raidSize + '</p>' +
+              '<p class="text-sm text-red-500 mt-1">Go to Battle Simulator to resolve!</p>' +
+              '</div>';
+          } else {
+            resultDiv.className = 'mt-4 p-4 rounded-lg bg-green-100';
+            resultDiv.innerHTML = '<div class="text-center">' +
+              '<div class="text-4xl mb-2">✅</div>' +
+              '<p class="font-bold text-green-700">Safe! Rolled ' + roll + ' (needed ' + data.raidChance + ' or less)</p>' +
+              '<p class="text-green-600">No raid encounter.</p>' +
+              '</div>';
+          }
+        }
+        
+        function rollAllyCheck() {
+          const level = parseInt(slider.value);
+          const data = relationsData.find(r => r.level === level);
+          const roll = Math.floor(Math.random() * 100) + 1;
+          const allyChance = data.allyChance || 0;
+          const isAid = roll <= allyChance;
+          
+          const resultDiv = document.getElementById('ally-result');
+          resultDiv.classList.remove('hidden');
+          
+          if (isAid) {
+            // Roll 1d4 for number of warriors
+            const warriors = Math.floor(Math.random() * 4) + 1;
+            
+            resultDiv.className = 'mt-4 p-4 rounded-lg bg-green-100';
+            resultDiv.innerHTML = '<div class="text-center">' +
+              '<div class="text-4xl mb-2">🪶⚔️</div>' +
+              '<p class="font-bold text-green-700">ALLIES JOIN! Rolled ' + roll + ' (needed ' + allyChance + ' or less)</p>' +
+              '<p class="text-green-600 mt-2">' + warriors + ' Native Warrior(s) join your battle!</p>' +
+              '<p class="text-sm text-green-500 mt-1">HP: 4, Damage: 2, Abilities: Bravery, Travel</p>' +
+              '</div>';
+          } else {
+            resultDiv.className = 'mt-4 p-4 rounded-lg bg-yellow-100';
+            resultDiv.innerHTML = '<div class="text-center">' +
+              '<div class="text-4xl mb-2">🤷</div>' +
+              '<p class="font-bold text-yellow-700">No Aid. Rolled ' + roll + ' (needed ' + allyChance + ' or less)</p>' +
+              '<p class="text-yellow-600">The tribes cannot spare warriors today.</p>' +
+              '</div>';
+          }
+        }
+        
+        slider.addEventListener('input', updateRelationsDisplay);
+        updateRelationsDisplay();
+      `}} />
+    </div>,
+    { title: 'Native Relations - Oregon Trail' }
   )
 })
 
