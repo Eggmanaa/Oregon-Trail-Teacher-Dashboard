@@ -337,20 +337,271 @@ export const STATUS_EFFECTS = {
   ]
 };
 
-// Trail Route with locations
+// Trail Route with locations and historical significance
 export const TRAIL_STOPS = [
-  { id: "independence", name: "Independence, MO", distance: 0, daysFromPrev: 0, type: "start", description: "Starting point - Buy supplies!", terrain: "plains" },
-  { id: "courthouse_rock", name: "Courthouse Rock", distance: 480, daysFromPrev: 5, type: "landmark", description: "Waypoint", terrain: "plains" },
-  { id: "chimney_rock", name: "Chimney Rock", distance: 12, daysFromPrev: 1, type: "village", description: "Lakota-Sioux Village nearby", terrain: "plains" },
-  { id: "fort_laramie", name: "Fort Laramie", distance: 70, daysFromPrev: 2, type: "fort", description: "Major Trading Post", terrain: "plains" },
-  { id: "independence_rock", name: "Independence Rock", distance: 190, daysFromPrev: 12, type: "landmark", description: "Famous landmark", terrain: "mountains" },
-  { id: "fort_bridger", name: "Fort Bridger", distance: 225, daysFromPrev: 15, type: "fort", description: "Mormon Settlement (20% Dysentery)", terrain: "mountains" },
-  { id: "soda_springs", name: "Soda Springs", distance: 162, daysFromPrev: 8, type: "landmark", description: "Natural springs", terrain: "mountains" },
-  { id: "fort_hall", name: "Fort Hall", distance: 57, daysFromPrev: 2, type: "fort", description: "Mormon area, Shoshone Village nearby (3 days)", terrain: "mountains" },
-  { id: "fort_boise", name: "Fort Boise", distance: 280, daysFromPrev: 16, type: "fort", description: "50% Tuberculosis! High prices", terrain: "mountains" },
-  { id: "whitman_mission", name: "Whitman Mission", distance: 220, daysFromPrev: 12, type: "mission", description: "30% Measles. Holy 3 = Free items, Holy 1 = 50% off", terrain: "mountains" },
-  { id: "the_dalles", name: "The Dalles", distance: 120, daysFromPrev: 7, type: "crossing", description: "River crossing & trade center", terrain: "river" },
-  { id: "oregon_city", name: "Oregon City", distance: 100, daysFromPrev: 5, type: "end", description: "Finish Line! +500 VP", terrain: "plains" }
+  { 
+    id: "independence", 
+    name: "Independence, MO", 
+    distance: 0, 
+    daysFromPrev: 0, 
+    type: "start", 
+    description: "Starting point - Buy supplies!", 
+    terrain: "plains",
+    historicalSignificance: {
+      title: "Independence, Missouri - Gateway to the West",
+      yearEstablished: "1827",
+      summary: "Independence was the primary jumping-off point for settlers heading west on the Oregon, California, and Santa Fe Trails. By the 1840s, it was called the 'Queen City of the Trails.'",
+      keyFacts: [
+        "Became the eastern terminus of the Santa Fe Trail in 1827",
+        "By 1846, over 2,700 wagons departed from Independence annually",
+        "Outfitters sold everything emigrants needed: wagons, oxen, food, and supplies",
+        "Emigrants typically departed in April-May to cross mountains before winter"
+      ],
+      whyImportant: "Independence represented the last major American settlement before entering Indian Territory. Here, emigrants made final preparations, formed wagon companies, and said goodbye to civilization as they knew it."
+    }
+  },
+  { 
+    id: "courthouse_rock", 
+    name: "Courthouse Rock", 
+    distance: 480, 
+    daysFromPrev: 5, 
+    type: "landmark", 
+    description: "Waypoint", 
+    terrain: "plains",
+    historicalSignificance: {
+      title: "Courthouse and Jail Rocks - Nature's Courtroom",
+      yearEstablished: "Named 1830s",
+      summary: "These distinctive clay and sandstone formations rose 400 feet above the North Platte River valley, visible for miles. Emigrants called them 'Courthouse' and 'Jail' for their resemblance to buildings back East.",
+      keyFacts: [
+        "Formed from Brule clay and Gering sandstone, 20-25 million years old",
+        "Served as a crucial navigation landmark for wagon trains",
+        "Many emigrants climbed to the top and carved their names",
+        "First major 'tourist attraction' of the Oregon Trail journey"
+      ],
+      whyImportant: "Seeing Courthouse Rock meant emigrants had completed nearly one-third of their journey and were entering the dramatic landscape of the High Plains."
+    }
+  },
+  { 
+    id: "chimney_rock", 
+    name: "Chimney Rock", 
+    distance: 12, 
+    daysFromPrev: 1, 
+    type: "village", 
+    description: "Lakota-Sioux Village nearby", 
+    terrain: "plains",
+    historicalSignificance: {
+      title: "Chimney Rock - The Most Famous Landmark",
+      yearEstablished: "Named 1820s",
+      summary: "Rising 325 feet above the North Platte valley, Chimney Rock was the most mentioned landmark in emigrant diaries. Its distinctive spire could be seen for two days' travel away.",
+      keyFacts: [
+        "Mentioned in more emigrant journals than any other trail landmark",
+        "Originally over 500 feet tall - erosion has reduced its height",
+        "The Lakota-Sioux called it 'Elk Penis' for its shape",
+        "Designated a National Historic Site in 1956",
+        "Nearby Lakota-Sioux villages traded with passing emigrants"
+      ],
+      whyImportant: "Chimney Rock marked the transition from the prairie lowlands to the Rocky Mountain region. It was a photographer's favorite and appeared on countless postcards sent back East."
+    }
+  },
+  { 
+    id: "fort_laramie", 
+    name: "Fort Laramie", 
+    distance: 70, 
+    daysFromPrev: 2, 
+    type: "fort", 
+    description: "Major Trading Post", 
+    terrain: "plains",
+    historicalSignificance: {
+      title: "Fort Laramie - Crossroads of the West",
+      yearEstablished: "1834",
+      summary: "Originally a fur trading post called Fort William, Fort Laramie became the most important military post on the Northern Plains and a vital resupply point for emigrants.",
+      keyFacts: [
+        "Founded by fur traders William Sublette and Robert Campbell in 1834",
+        "Purchased by the U.S. Army in 1849 for $4,000",
+        "Site of the 1851 and 1868 Fort Laramie Treaties with Plains tribes",
+        "Emigrants could buy supplies, repair wagons, and send letters home",
+        "Peak years saw 50,000+ emigrants pass through annually"
+      ],
+      whyImportant: "Fort Laramie was where emigrants left the Great Plains and entered the Rocky Mountains. It was their last reliable contact with the U.S. government and military."
+    }
+  },
+  { 
+    id: "independence_rock", 
+    name: "Independence Rock", 
+    distance: 190, 
+    daysFromPrev: 12, 
+    type: "landmark", 
+    description: "Famous landmark", 
+    terrain: "mountains",
+    historicalSignificance: {
+      title: "Independence Rock - The Register of the Desert",
+      yearEstablished: "Named 1830",
+      summary: "This massive granite dome, 1,900 feet long and 700 feet wide, became known as 'The Great Register of the Desert' because thousands of emigrants carved or painted their names on its surface.",
+      keyFacts: [
+        "Named because fur trappers celebrated July 4th, 1830 here",
+        "Over 5,000 names are still visible carved into the rock",
+        "Emigrants used axle grease, tar, and gunpowder to write names",
+        "Reaching here by July 4th meant you were on schedule to cross mountains before winter",
+        "Father Pierre-Jean De Smet called it 'The Great Register of the Desert' in 1840"
+      ],
+      whyImportant: "Independence Rock was both a milestone marker and a time check. Arriving by Independence Day (July 4th) meant wagon trains were on pace to cross the Sierra Nevada before winter snows."
+    }
+  },
+  { 
+    id: "fort_bridger", 
+    name: "Fort Bridger", 
+    distance: 225, 
+    daysFromPrev: 15, 
+    type: "fort", 
+    description: "Mormon Settlement (20% Dysentery)", 
+    terrain: "mountains",
+    historicalSignificance: {
+      title: "Fort Bridger - Mountain Man's Trading Post",
+      yearEstablished: "1843",
+      summary: "Founded by legendary mountain man Jim Bridger, this trading post sat at a crossroads where the Oregon Trail split from routes to California and Salt Lake City.",
+      keyFacts: [
+        "Built by Jim Bridger and Louis Vasquez as a supply stop",
+        "Jim Bridger was one of the most famous mountain men in American history",
+        "Sold to the Mormons in 1855, who burned it in 1857 during the Utah War",
+        "Rebuilt by the U.S. Army and operated until 1890",
+        "The Donner Party stopped here and fatefully chose the untested Hastings Cutoff"
+      ],
+      whyImportant: "Fort Bridger represented a critical decision point where emigrants chose their final destination: Oregon, California, or Salt Lake. Wrong decisions here led to disaster, as the Donner Party learned."
+    }
+  },
+  { 
+    id: "soda_springs", 
+    name: "Soda Springs", 
+    distance: 162, 
+    daysFromPrev: 8, 
+    type: "landmark", 
+    description: "Natural springs", 
+    terrain: "mountains",
+    historicalSignificance: {
+      title: "Soda Springs - Nature's Wonder",
+      yearEstablished: "Known since 1811",
+      summary: "This area featured dozens of natural mineral springs with carbonated water that emigrants compared to 'soda water.' Steamboat Spring erupted every few seconds with a sound like a steamboat.",
+      keyFacts: [
+        "Over 1,000 mineral springs in the area, many naturally carbonated",
+        "Steamboat Spring erupted regularly until a dam flooded it in 1937",
+        "Emigrants used the mineral water for drinking and baking bread",
+        "Beer Spring was named because its water tasted like flat beer",
+        "Many emigrants spent extra days here exploring the natural wonders"
+      ],
+      whyImportant: "Soda Springs provided a much-needed morale boost after weeks of difficult mountain travel. The strange and wonderful springs gave emigrants stories to tell and letters to write home about."
+    }
+  },
+  { 
+    id: "fort_hall", 
+    name: "Fort Hall", 
+    distance: 57, 
+    daysFromPrev: 2, 
+    type: "fort", 
+    description: "Mormon area, Shoshone Village nearby (3 days)", 
+    terrain: "mountains",
+    historicalSignificance: {
+      title: "Fort Hall - The Oregon-California Parting",
+      yearEstablished: "1834",
+      summary: "Built by American trader Nathaniel Wyeth, Fort Hall became a crucial decision point where the Oregon Trail and California Trail diverged. The Hudson's Bay Company operated it from 1837-1856.",
+      keyFacts: [
+        "Built by Nathaniel Wyeth after being cheated by the Rocky Mountain Fur Company",
+        "The Hudson's Bay Company bought it to control American emigration",
+        "British traders reportedly discouraged emigrants from going to Oregon",
+        "Where the California Trail branched off toward Sacramento",
+        "Shoshone tribes traded horses and food with emigrants"
+      ],
+      whyImportant: "Fort Hall was where emigrants made their final choice between Oregon and California. The Shoshone tribes here were generally friendly and helped emigrants prepare for the difficult journey ahead."
+    }
+  },
+  { 
+    id: "fort_boise", 
+    name: "Fort Boise", 
+    distance: 280, 
+    daysFromPrev: 16, 
+    type: "fort", 
+    description: "50% Tuberculosis! High prices", 
+    terrain: "mountains",
+    historicalSignificance: {
+      title: "Fort Boise - Last Stop Before the Desert",
+      yearEstablished: "1834",
+      summary: "Another Hudson's Bay Company post, Fort Boise was the last major supply point before emigrants faced the brutal Snake River Plain and the dreaded crossing into Oregon.",
+      keyFacts: [
+        "Built by the Hudson's Bay Company near the Boise River",
+        "Abandoned in 1855 due to Shoshone attacks during the Snake War",
+        "Emigrants faced 300 miles of desert and difficult river crossings ahead",
+        "Disease was rampant due to contaminated water sources",
+        "Prices were extremely high due to difficulty of resupply"
+      ],
+      whyImportant: "Fort Boise represented the end of relatively 'easy' travel. Beyond lay the most dangerous portion of the Oregon Trail, with desert crossings, steep mountain passes, and treacherous river fords."
+    }
+  },
+  { 
+    id: "whitman_mission", 
+    name: "Whitman Mission", 
+    distance: 220, 
+    daysFromPrev: 12, 
+    type: "mission", 
+    description: "30% Measles. Holy 3 = Free items, Holy 1 = 50% off", 
+    terrain: "mountains",
+    historicalSignificance: {
+      title: "Whitman Mission - Tragedy on the Trail",
+      yearEstablished: "1836",
+      summary: "Marcus and Narcissa Whitman established this Presbyterian mission to convert the Cayuse Indians. It became a way station for Oregon Trail emigrants, but ended in tragedy in 1847.",
+      keyFacts: [
+        "Marcus Whitman and his wife Narcissa were among the first Americans to cross the Rockies by wagon",
+        "The mission provided medical care, food, and supplies to emigrants",
+        "A measles epidemic in 1847 killed half the local Cayuse tribe",
+        "On November 29, 1847, Cayuse warriors killed the Whitmans and 11 others",
+        "The 'Whitman Massacre' led to the Cayuse War and Oregon becoming a U.S. territory"
+      ],
+      whyImportant: "The Whitman Mission tragedy changed the course of Pacific Northwest history. It demonstrated both the hope and the conflict inherent in westward expansion and relations with Native Americans."
+    }
+  },
+  { 
+    id: "the_dalles", 
+    name: "The Dalles", 
+    distance: 120, 
+    daysFromPrev: 7, 
+    type: "crossing", 
+    description: "River crossing & trade center", 
+    terrain: "river",
+    historicalSignificance: {
+      title: "The Dalles - Gateway to the Columbia",
+      yearEstablished: "Trading center for 10,000+ years",
+      summary: "The Dalles was one of the most important Native American trading centers in North America for millennia. For emigrants, it represented the final major obstacle before reaching the Willamette Valley.",
+      keyFacts: [
+        "Native Americans had traded at The Dalles for over 10,000 years",
+        "The name comes from French 'dalle' meaning flagstone or rapids",
+        "Emigrants faced a terrible choice: raft the dangerous Columbia or take the brutal Barlow Road",
+        "Many emigrants drowned attempting to raft through the Columbia River Gorge",
+        "The Chinook people controlled trade and charged ferrying fees"
+      ],
+      whyImportant: "The Dalles forced emigrants to make one final life-or-death decision. The Columbia River route was faster but deadly dangerous, while the Barlow Road was safer but exhausting. Either way, Oregon was finally within reach."
+    }
+  },
+  { 
+    id: "oregon_city", 
+    name: "Oregon City", 
+    distance: 100, 
+    daysFromPrev: 5, 
+    type: "end", 
+    description: "Finish Line! +500 VP", 
+    terrain: "plains",
+    historicalSignificance: {
+      title: "Oregon City - End of the Trail",
+      yearEstablished: "1829",
+      summary: "Oregon City was the first incorporated city west of the Rocky Mountains and the official end of the Oregon Trail. It served as the territorial capital and the place where emigrants filed their land claims.",
+      keyFacts: [
+        "Founded by John McLoughlin, 'Father of Oregon'",
+        "First incorporated city west of the Rockies (1844)",
+        "Served as Oregon Territory capital from 1848-1852",
+        "Willamette Falls provided power for the first long-distance electricity transmission in America",
+        "The Land Office here processed thousands of Donation Land Claims",
+        "Emigrants received 640 acres free under the Donation Land Claim Act of 1850"
+      ],
+      whyImportant: "Reaching Oregon City meant you had survived one of the most grueling journeys in American history. Here, emigrants could finally claim their land, build their homes, and start their new lives in the promised land of Oregon."
+    }
+  }
 ];
 
 // Native Villages (Barter only - no cash)

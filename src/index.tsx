@@ -170,13 +170,14 @@ app.get('/', async (c) => {
         <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6">
           <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <i class="fas fa-route text-trail-brown"></i> The Oregon Trail
+            <span class="text-sm font-normal text-gray-500 ml-2">(Click any stop for historical info)</span>
           </h2>
           <div class="overflow-x-auto">
             <div class="flex items-center gap-2 min-w-max pb-4">
               {TRAIL_STOPS.map((stop, index) => (
                 <div class="flex items-center">
-                  <div class="flex flex-col items-center min-w-[90px]">
-                    <div class={`w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold shadow ${
+                  <div class="flex flex-col items-center min-w-[90px] cursor-pointer group" onclick={`showHistoricalInfo('${stop.id}')`}>
+                    <div class={`w-10 h-10 rounded-full flex items-center justify-center text-white text-xs font-bold shadow transition-transform group-hover:scale-110 ${
                       stop.type === 'start' ? 'bg-green-600' :
                       stop.type === 'end' ? 'bg-red-600' :
                       stop.type === 'fort' ? 'bg-blue-600' :
@@ -186,7 +187,7 @@ app.get('/', async (c) => {
                     }`}>
                       {index + 1}
                     </div>
-                    <p class="text-xs text-center mt-1 font-medium leading-tight">{stop.name}</p>
+                    <p class="text-xs text-center mt-1 font-medium leading-tight group-hover:text-blue-600 transition-colors">{stop.name}</p>
                     <p class="text-xs text-gray-400">{stop.distance}mi</p>
                   </div>
                   {index < TRAIL_STOPS.length - 1 && (
@@ -197,7 +198,77 @@ app.get('/', async (c) => {
             </div>
           </div>
         </div>
+
+        {/* Historical Info Modal */}
+        <div id="historical-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+          <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-amber-700 text-white p-4 rounded-t-xl flex items-center justify-between">
+              <h3 id="modal-title" class="text-xl font-bold flex items-center gap-2">
+                <i class="fas fa-landmark"></i> <span>Historical Significance</span>
+              </h3>
+              <button onclick="closeHistoricalModal()" class="text-white/70 hover:text-white text-2xl">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div id="modal-content" class="p-6">
+              {/* Content will be injected by JavaScript */}
+            </div>
+          </div>
+        </div>
       </main>
+
+      <script dangerouslySetInnerHTML={{__html: `
+        const trailStopsData = ${JSON.stringify(TRAIL_STOPS)};
+        
+        function showHistoricalInfo(stopId) {
+          const stop = trailStopsData.find(s => s.id === stopId);
+          if (!stop || !stop.historicalSignificance) return;
+          
+          const h = stop.historicalSignificance;
+          const modal = document.getElementById('historical-modal');
+          const title = document.getElementById('modal-title');
+          const content = document.getElementById('modal-content');
+          
+          title.innerHTML = '<i class="fas fa-landmark"></i> ' + h.title;
+          
+          let factsHtml = h.keyFacts.map(f => '<li class="mb-1">' + f + '</li>').join('');
+          
+          content.innerHTML = 
+            '<div class="mb-4">' +
+              '<span class="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">' +
+                '<i class="fas fa-calendar-alt mr-1"></i> Est. ' + h.yearEstablished +
+              '</span>' +
+            '</div>' +
+            '<p class="text-gray-700 mb-4 text-lg leading-relaxed">' + h.summary + '</p>' +
+            '<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">' +
+              '<h4 class="font-bold text-blue-800 mb-2"><i class="fas fa-list-ul mr-2"></i>Key Facts</h4>' +
+              '<ul class="list-disc list-inside text-blue-900 space-y-1">' + factsHtml + '</ul>' +
+            '</div>' +
+            '<div class="bg-green-50 border-l-4 border-green-500 p-4">' +
+              '<h4 class="font-bold text-green-800 mb-2"><i class="fas fa-question-circle mr-2"></i>Why Was This Important?</h4>' +
+              '<p class="text-green-900">' + h.whyImportant + '</p>' +
+            '</div>';
+          
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+        }
+        
+        function closeHistoricalModal() {
+          const modal = document.getElementById('historical-modal');
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+        
+        // Close modal on backdrop click
+        document.getElementById('historical-modal')?.addEventListener('click', function(e) {
+          if (e.target === this) closeHistoricalModal();
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') closeHistoricalModal();
+        });
+      `}} />
     </div>,
     { title: 'Oregon Trail - Dashboard' }
   )
@@ -370,21 +441,24 @@ app.get('/game/:id', async (c) => {
       <main class="max-w-7xl mx-auto p-8">
         {/* Trail Progress Map */}
         <div class="bg-white rounded-xl shadow-md p-6 mb-8">
-          <h2 class="text-lg font-bold text-gray-800 mb-4">Trail Progress</h2>
+          <h2 class="text-lg font-bold text-gray-800 mb-4 flex items-center gap-2">
+            Trail Progress
+            <span class="text-sm font-normal text-gray-500">(Click stops for historical info)</span>
+          </h2>
           <div class="overflow-x-auto">
             <div class="flex items-start gap-1 min-w-max pb-4">
               {TRAIL_STOPS.map((stop, index) => {
                 const trainsHere = trains.filter((t: any) => t.current_location_index === index)
                 return (
                   <div class="flex items-start">
-                    <div class="flex flex-col items-center min-w-[80px]">
-                      <div class={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold ${
+                    <div class="flex flex-col items-center min-w-[80px] cursor-pointer group" onclick={`showHistoricalInfo('${stop.id}')`}>
+                      <div class={`w-8 h-8 rounded-full flex items-center justify-center text-white text-xs font-bold transition-transform group-hover:scale-110 ${
                         stop.type === 'start' ? 'bg-green-600' :
                         stop.type === 'end' ? 'bg-red-600' :
                         stop.type === 'fort' ? 'bg-blue-600' :
                         'bg-gray-500'
                       }`}>{index + 1}</div>
-                      <p class="text-xs text-center mt-1 font-medium leading-tight">{stop.name}</p>
+                      <p class="text-xs text-center mt-1 font-medium leading-tight group-hover:text-blue-600 transition-colors">{stop.name}</p>
                       {trainsHere.length > 0 && (
                         <div class="mt-2 space-y-1">
                           {trainsHere.map((t: any) => (
@@ -399,6 +473,23 @@ app.get('/game/:id', async (c) => {
                   </div>
                 )
               })}
+            </div>
+          </div>
+        </div>
+
+        {/* Historical Info Modal */}
+        <div id="historical-modal" class="fixed inset-0 bg-black/50 z-50 hidden items-center justify-center p-4">
+          <div class="bg-white rounded-xl shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+            <div class="sticky top-0 bg-amber-700 text-white p-4 rounded-t-xl flex items-center justify-between">
+              <h3 id="modal-title" class="text-xl font-bold flex items-center gap-2">
+                <i class="fas fa-landmark"></i> <span>Historical Significance</span>
+              </h3>
+              <button onclick="closeHistoricalModal()" class="text-white/70 hover:text-white text-2xl">
+                <i class="fas fa-times"></i>
+              </button>
+            </div>
+            <div id="modal-content" class="p-6">
+              {/* Content will be injected by JavaScript */}
             </div>
           </div>
         </div>
@@ -439,6 +530,8 @@ app.get('/game/:id', async (c) => {
       </main>
 
       <script dangerouslySetInnerHTML={{__html: `
+        const trailStopsData = ${JSON.stringify(TRAIL_STOPS)};
+        
         async function updateTrainLocation(trainId) {
           const select = document.getElementById('location-' + trainId);
           const newIndex = parseInt(select.value);
@@ -449,7 +542,7 @@ app.get('/game/:id', async (c) => {
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({
                 currentLocationIndex: newIndex,
-                currentLocationId: '${JSON.stringify(TRAIL_STOPS)}'[newIndex]?.id
+                currentLocationId: trailStopsData[newIndex]?.id
               })
             });
             location.reload();
@@ -457,6 +550,55 @@ app.get('/game/:id', async (c) => {
             alert('Failed to update location');
           }
         }
+        
+        function showHistoricalInfo(stopId) {
+          const stop = trailStopsData.find(s => s.id === stopId);
+          if (!stop || !stop.historicalSignificance) return;
+          
+          const h = stop.historicalSignificance;
+          const modal = document.getElementById('historical-modal');
+          const title = document.getElementById('modal-title');
+          const content = document.getElementById('modal-content');
+          
+          title.innerHTML = '<i class="fas fa-landmark"></i> ' + h.title;
+          
+          let factsHtml = h.keyFacts.map(f => '<li class="mb-1">' + f + '</li>').join('');
+          
+          content.innerHTML = 
+            '<div class="mb-4">' +
+              '<span class="inline-block bg-amber-100 text-amber-800 px-3 py-1 rounded-full text-sm font-medium">' +
+                '<i class="fas fa-calendar-alt mr-1"></i> Est. ' + h.yearEstablished +
+              '</span>' +
+            '</div>' +
+            '<p class="text-gray-700 mb-4 text-lg leading-relaxed">' + h.summary + '</p>' +
+            '<div class="bg-blue-50 border-l-4 border-blue-500 p-4 mb-4">' +
+              '<h4 class="font-bold text-blue-800 mb-2"><i class="fas fa-list-ul mr-2"></i>Key Facts</h4>' +
+              '<ul class="list-disc list-inside text-blue-900 space-y-1">' + factsHtml + '</ul>' +
+            '</div>' +
+            '<div class="bg-green-50 border-l-4 border-green-500 p-4">' +
+              '<h4 class="font-bold text-green-800 mb-2"><i class="fas fa-question-circle mr-2"></i>Why Was This Important?</h4>' +
+              '<p class="text-green-900">' + h.whyImportant + '</p>' +
+            '</div>';
+          
+          modal.classList.remove('hidden');
+          modal.classList.add('flex');
+        }
+        
+        function closeHistoricalModal() {
+          const modal = document.getElementById('historical-modal');
+          modal.classList.add('hidden');
+          modal.classList.remove('flex');
+        }
+        
+        // Close modal on backdrop click
+        document.getElementById('historical-modal')?.addEventListener('click', function(e) {
+          if (e.target === this) closeHistoricalModal();
+        });
+        
+        // Close modal on Escape key
+        document.addEventListener('keydown', function(e) {
+          if (e.key === 'Escape') closeHistoricalModal();
+        });
       `}} />
     </div>,
     { title: `${game.class_name} - Oregon Trail` }
@@ -1701,13 +1843,33 @@ app.get('/victory', (c) => {
 
 // Student Worksheet Page
 app.get('/worksheet', (c) => {
+  const characterSheetUrl = 'https://www.genspark.ai/api/files/s/8nhQhOIz'
+  const inventoryLogUrl = 'https://www.genspark.ai/api/files/s/kYjKxTnB'
+  
   return c.render(
     <div class="min-h-screen bg-white">
       <style dangerouslySetInnerHTML={{__html: `
         @media print {
           header, .no-print { display: none !important; }
-          body { background: white; }
-          .print-page { page-break-after: always; }
+          body { background: white; margin: 0; padding: 0; }
+          .print-page { 
+            page-break-after: always; 
+            margin: 0;
+            padding: 0;
+          }
+          .print-page img {
+            width: 100%;
+            height: auto;
+            max-height: 100vh;
+            object-fit: contain;
+          }
+          main { padding: 0 !important; margin: 0 !important; max-width: none !important; }
+        }
+        .worksheet-img {
+          width: 100%;
+          height: auto;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          border-radius: 8px;
         }
       `}} />
       
@@ -1715,156 +1877,58 @@ app.get('/worksheet', (c) => {
         <div class="max-w-7xl mx-auto flex items-center justify-between">
           <div class="flex items-center gap-4">
             <a href="/" class="text-white/70 hover:text-white transition"><i class="fas fa-arrow-left"></i></a>
-            <h1 class="text-2xl font-bold">Student Worksheet</h1>
+            <h1 class="text-2xl font-bold">📋 Student Worksheets</h1>
           </div>
-          <button onclick="window.print()" class="bg-white text-green-700 px-4 py-2 rounded-lg font-bold hover:bg-gray-100">
-            <i class="fas fa-print mr-2"></i>Print
-          </button>
+          <div class="flex gap-3">
+            <a href={characterSheetUrl} download="Oregon_Trail_Character_Sheet.png" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 transition">
+              <i class="fas fa-download mr-2"></i>Download Character Sheet
+            </a>
+            <a href={inventoryLogUrl} download="Oregon_Trail_Inventory_Travel_Log.png" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 transition">
+              <i class="fas fa-download mr-2"></i>Download Inventory Log
+            </a>
+            <button onclick="window.print()" class="bg-white text-green-700 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition">
+              <i class="fas fa-print mr-2"></i>Print Both
+            </button>
+          </div>
         </div>
       </header>
 
       <main class="max-w-4xl mx-auto p-8">
+        {/* Instructions */}
+        <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-8 no-print">
+          <h2 class="font-bold text-amber-800 mb-2 flex items-center gap-2">
+            <i class="fas fa-info-circle"></i> Instructions
+          </h2>
+          <ul class="text-amber-700 text-sm space-y-1">
+            <li>• <strong>Print Both:</strong> Click "Print Both" to print both worksheets (2 pages)</li>
+            <li>• <strong>Download:</strong> Click the download buttons to save individual worksheets as images</li>
+            <li>• <strong>Character Sheet:</strong> Use for tracking player info, skills, party members, and notes</li>
+            <li>• <strong>Inventory & Travel Log:</strong> Use for tracking wagon inventory, weapons, animals, and daily travel</li>
+          </ul>
+        </div>
+
         {/* Page 1: Character Sheet */}
-        <div class="print-page border-2 border-gray-300 rounded-xl p-8 mb-8">
-          <div class="text-center mb-6">
-            <h1 class="text-3xl font-bold">OREGON TRAIL CHARACTER SHEET</h1>
-            <p class="text-gray-600">Independence, Missouri to Oregon City</p>
-          </div>
-
-          <div class="grid grid-cols-2 gap-6 mb-6">
-            <div class="border-b-2 border-gray-400 pb-2">
-              <label class="text-sm text-gray-600">Player Name:</label>
-            </div>
-            <div class="border-b-2 border-gray-400 pb-2">
-              <label class="text-sm text-gray-600">Wagon Train Name:</label>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="border-2 border-gray-400 rounded p-3">
-              <label class="text-sm text-gray-600 block mb-1">Profession:</label>
-              <div class="h-6 border-b border-gray-300"></div>
-            </div>
-            <div class="border-2 border-gray-400 rounded p-3">
-              <label class="text-sm text-gray-600 block mb-1">Nationality:</label>
-              <div class="h-6 border-b border-gray-300"></div>
-            </div>
-            <div class="border-2 border-gray-400 rounded p-3">
-              <label class="text-sm text-gray-600 block mb-1">Religion:</label>
-              <div class="h-6 border-b border-gray-300"></div>
-            </div>
-          </div>
-
-          <div class="grid grid-cols-3 gap-4 mb-6">
-            <div class="border-2 border-red-400 rounded p-3 text-center">
-              <label class="text-sm text-red-600 block">Health Points</label>
-              <div class="text-4xl font-bold">___/___</div>
-            </div>
-            <div class="border-2 border-green-400 rounded p-3 text-center">
-              <label class="text-sm text-green-600 block">Money ($)</label>
-              <div class="text-4xl font-bold">$_____</div>
-            </div>
-            <div class="border-2 border-yellow-400 rounded p-3 text-center">
-              <label class="text-sm text-yellow-600 block">Victory Points</label>
-              <div class="text-4xl font-bold">_____</div>
-            </div>
-          </div>
-
-          <div class="mb-6">
-            <h3 class="font-bold mb-2 border-b pb-1">Skills:</h3>
-            <div class="grid grid-cols-4 gap-2">
-              {[1,2,3,4,5,6,7,8].map(i => (
-                <div class="border border-gray-300 rounded p-2 h-8"></div>
-              ))}
-            </div>
-          </div>
-
-          <div class="mb-6">
-            <h3 class="font-bold mb-2 border-b pb-1">Party Members:</h3>
-            <table class="w-full text-sm">
-              <thead>
-                <tr class="border-b-2">
-                  <th class="text-left py-1">Name</th>
-                  <th class="text-left py-1">Role</th>
-                  <th class="text-left py-1">HP</th>
-                  <th class="text-left py-1">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {[1,2,3,4,5].map(i => (
-                  <tr class="border-b">
-                    <td class="py-2 border-r pr-2"><div class="h-4"></div></td>
-                    <td class="py-2 border-r px-2"><div class="h-4"></div></td>
-                    <td class="py-2 border-r px-2"><div class="h-4"></div></td>
-                    <td class="py-2 pl-2"><div class="h-4"></div></td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
-
-          <div>
-            <h3 class="font-bold mb-2 border-b pb-1">Notes:</h3>
-            <div class="border border-gray-300 rounded p-2 h-24"></div>
+        <div class="mb-8">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 no-print">
+            <i class="fas fa-user-circle text-blue-600"></i> Page 1: Character Sheet
+          </h2>
+          <div class="print-page">
+            <img src={characterSheetUrl} alt="Oregon Trail Character Sheet" class="worksheet-img" />
           </div>
         </div>
 
         {/* Page 2: Inventory & Travel Log */}
-        <div class="print-page border-2 border-gray-300 rounded-xl p-8">
-          <h2 class="text-2xl font-bold text-center mb-6">INVENTORY & TRAVEL LOG</h2>
-
-          <div class="grid grid-cols-2 gap-6 mb-6">
-            <div>
-              <h3 class="font-bold mb-2 border-b pb-1">Wagon Inventory (20 slots):</h3>
-              <div class="grid grid-cols-4 gap-1">
-                {[...Array(20)].map((_, i) => (
-                  <div class="border border-gray-300 rounded p-1 h-8 text-xs text-center">{i+1}</div>
-                ))}
-              </div>
-            </div>
-            <div>
-              <h3 class="font-bold mb-2 border-b pb-1">Weapons:</h3>
-              <div class="space-y-2">
-                {[1,2,3].map(i => (
-                  <div class="border border-gray-300 rounded p-2 h-8"></div>
-                ))}
-              </div>
-              <h3 class="font-bold mt-4 mb-2 border-b pb-1">Animals:</h3>
-              <div class="space-y-2">
-                {[1,2,3].map(i => (
-                  <div class="border border-gray-300 rounded p-2 h-8"></div>
-                ))}
-              </div>
-            </div>
+        <div class="mb-8">
+          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 no-print">
+            <i class="fas fa-box-open text-amber-600"></i> Page 2: Inventory & Travel Log
+          </h2>
+          <div class="print-page">
+            <img src={inventoryLogUrl} alt="Oregon Trail Inventory and Travel Log" class="worksheet-img" />
           </div>
-
-          <h3 class="font-bold mb-2 border-b pb-1">Daily Travel Log:</h3>
-          <table class="w-full text-sm">
-            <thead>
-              <tr class="border-b-2 bg-gray-100">
-                <th class="py-1 px-2 text-left">Day</th>
-                <th class="py-1 px-2 text-left">Location</th>
-                <th class="py-1 px-2 text-left">Miles</th>
-                <th class="py-1 px-2 text-left">Food Used</th>
-                <th class="py-1 px-2 text-left">Events/Notes</th>
-              </tr>
-            </thead>
-            <tbody>
-              {[...Array(15)].map((_, i) => (
-                <tr class="border-b">
-                  <td class="py-2 px-2 border-r">{i+1}</td>
-                  <td class="py-2 px-2 border-r"></td>
-                  <td class="py-2 px-2 border-r"></td>
-                  <td class="py-2 px-2 border-r"></td>
-                  <td class="py-2 px-2"></td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
         </div>
       </main>
     </div>,
-    { title: 'Student Worksheet - Oregon Trail' }
+    { title: 'Student Worksheets - Oregon Trail' }
   )
 })
 
