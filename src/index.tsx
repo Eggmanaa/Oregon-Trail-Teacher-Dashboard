@@ -1843,88 +1843,81 @@ app.get('/victory', (c) => {
 
 // Student Worksheet Page
 app.get('/worksheet', (c) => {
-  const characterSheetUrl = 'https://www.genspark.ai/api/files/s/8nhQhOIz'
-  const inventoryLogUrl = 'https://www.genspark.ai/api/files/s/kYjKxTnB'
-  
   return c.render(
     <div class="min-h-screen bg-white">
       <style dangerouslySetInnerHTML={{__html: `
-        @media print {
-          header, .no-print { display: none !important; }
-          body { background: white; margin: 0; padding: 0; }
-          .print-page { 
-            page-break-after: always; 
-            margin: 0;
-            padding: 0;
-          }
-          .print-page img {
-            width: 100%;
-            height: auto;
-            max-height: 100vh;
-            object-fit: contain;
-          }
-          main { padding: 0 !important; margin: 0 !important; max-width: none !important; }
-        }
         .worksheet-img {
           width: 100%;
           height: auto;
           box-shadow: 0 4px 6px rgba(0,0,0,0.1);
           border-radius: 8px;
+          cursor: pointer;
+          transition: transform 0.2s, box-shadow 0.2s;
+        }
+        .worksheet-img:hover {
+          transform: scale(1.01);
+          box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+        }
+        .worksheet-card {
+          background: white;
+          border-radius: 12px;
+          padding: 1.5rem;
+          box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+          margin-bottom: 2rem;
         }
       `}} />
       
-      <header class="wagon-trail text-white py-4 px-8 no-print">
+      <header class="wagon-trail text-white py-4 px-8">
         <div class="max-w-7xl mx-auto flex items-center justify-between">
           <div class="flex items-center gap-4">
             <a href="/" class="text-white/70 hover:text-white transition"><i class="fas fa-arrow-left"></i></a>
             <h1 class="text-2xl font-bold">📋 Student Worksheets</h1>
           </div>
-          <div class="flex gap-3">
-            <a href={characterSheetUrl} download="Oregon_Trail_Character_Sheet.png" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 transition">
-              <i class="fas fa-download mr-2"></i>Download Character Sheet
-            </a>
-            <a href={inventoryLogUrl} download="Oregon_Trail_Inventory_Travel_Log.png" class="bg-blue-500 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-600 transition">
-              <i class="fas fa-download mr-2"></i>Download Inventory Log
-            </a>
-            <button onclick="window.print()" class="bg-white text-green-700 px-4 py-2 rounded-lg font-bold hover:bg-gray-100 transition">
-              <i class="fas fa-print mr-2"></i>Print Both
-            </button>
-          </div>
         </div>
       </header>
 
-      <main class="max-w-4xl mx-auto p-8">
+      <main class="max-w-5xl mx-auto p-8">
         {/* Instructions */}
-        <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-8 no-print">
+        <div class="bg-amber-50 border-2 border-amber-300 rounded-xl p-4 mb-8">
           <h2 class="font-bold text-amber-800 mb-2 flex items-center gap-2">
             <i class="fas fa-info-circle"></i> Instructions
           </h2>
           <ul class="text-amber-700 text-sm space-y-1">
-            <li>• <strong>Print Both:</strong> Click "Print Both" to print both worksheets (2 pages)</li>
-            <li>• <strong>Download:</strong> Click the download buttons to save individual worksheets as images</li>
+            <li>• <strong>Click image</strong> to open full-size in a new tab</li>
+            <li>• <strong>Download:</strong> Click the download button to save the worksheet</li>
             <li>• <strong>Character Sheet:</strong> Use for tracking player info, skills, party members, and notes</li>
             <li>• <strong>Inventory & Travel Log:</strong> Use for tracking wagon inventory, weapons, animals, and daily travel</li>
           </ul>
         </div>
 
         {/* Page 1: Character Sheet */}
-        <div class="mb-8">
-          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 no-print">
-            <i class="fas fa-user-circle text-blue-600"></i> Page 1: Character Sheet
-          </h2>
-          <div class="print-page">
-            <img src={characterSheetUrl} alt="Oregon Trail Character Sheet" class="worksheet-img" />
+        <div class="worksheet-card">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <i class="fas fa-user-circle text-blue-600"></i> Character Sheet
+            </h2>
+            <a href="/worksheets/character_sheet.png" download="Oregon_Trail_Character_Sheet.png" class="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-blue-700 transition flex items-center gap-2">
+              <i class="fas fa-download"></i> Download
+            </a>
           </div>
+          <a href="/worksheets/character_sheet.png" target="_blank">
+            <img src="/worksheets/character_sheet.png" alt="Oregon Trail Character Sheet" class="worksheet-img" />
+          </a>
         </div>
 
         {/* Page 2: Inventory & Travel Log */}
-        <div class="mb-8">
-          <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2 no-print">
-            <i class="fas fa-box-open text-amber-600"></i> Page 2: Inventory & Travel Log
-          </h2>
-          <div class="print-page">
-            <img src={inventoryLogUrl} alt="Oregon Trail Inventory and Travel Log" class="worksheet-img" />
+        <div class="worksheet-card">
+          <div class="flex items-center justify-between mb-4">
+            <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
+              <i class="fas fa-box-open text-amber-600"></i> Inventory & Travel Log
+            </h2>
+            <a href="/worksheets/inventory_log.png" download="Oregon_Trail_Inventory_Log.png" class="bg-amber-600 text-white px-4 py-2 rounded-lg font-bold hover:bg-amber-700 transition flex items-center gap-2">
+              <i class="fas fa-download"></i> Download
+            </a>
           </div>
+          <a href="/worksheets/inventory_log.png" target="_blank">
+            <img src="/worksheets/inventory_log.png" alt="Oregon Trail Inventory and Travel Log" class="worksheet-img" />
+          </a>
         </div>
       </main>
     </div>,
