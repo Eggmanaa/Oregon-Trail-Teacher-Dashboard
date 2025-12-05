@@ -1132,8 +1132,24 @@ app.get('/combat', (c) => {
             </div>
           </div>
           
-          <div class="bg-gray-800 rounded-lg p-4 max-h-64 overflow-y-auto font-mono text-sm text-white">
-            <pre id="battle-log" class="whitespace-pre-wrap"></pre>
+          {/* Party Status Report */}
+          <div class="mb-6">
+            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <i class="fas fa-clipboard-list text-blue-600"></i> Party Status Report
+            </h3>
+            <div id="party-report" class="grid grid-cols-1 md:grid-cols-2 gap-3">
+              {/* Party report cards will be inserted here */}
+            </div>
+          </div>
+          
+          {/* Battle Log */}
+          <div>
+            <h3 class="text-lg font-bold text-gray-800 mb-3 flex items-center gap-2">
+              <i class="fas fa-scroll text-amber-600"></i> Battle Log
+            </h3>
+            <div class="bg-gray-800 rounded-lg p-4 max-h-64 overflow-y-auto font-mono text-sm text-white">
+              <pre id="battle-log" class="whitespace-pre-wrap"></pre>
+            </div>
           </div>
         </div>
 
@@ -1254,12 +1270,54 @@ app.get('/combat', (c) => {
             result.outcome === 'defeat' ? '💀 DEFEAT' : '⚔️ DRAW';
           document.getElementById('battle-outcome').className = 
             'text-2xl font-bold mb-4 text-center ' + 
-            (result.outcome === 'victory' ? 'text-green-400' : 
-             result.outcome === 'defeat' ? 'text-red-400' : 'text-yellow-400');
+            (result.outcome === 'victory' ? 'text-green-600' : 
+             result.outcome === 'defeat' ? 'text-red-600' : 'text-yellow-600');
           document.getElementById('surviving-party').textContent = result.survivingParty.length;
           document.getElementById('battle-rounds').textContent = result.rounds;
           document.getElementById('enemies-defeated').textContent = result.casualties.enemies.length;
           document.getElementById('battle-log').textContent = result.battleLog.join('\\n');
+          
+          // Render party status report
+          const partyReportDiv = document.getElementById('party-report');
+          if (result.partyReport) {
+            partyReportDiv.innerHTML = result.partyReport.map(member => {
+              const isAlive = member.alive;
+              const hpPercent = Math.max(0, (member.currentHp / member.maxHp) * 100);
+              const hpColor = hpPercent > 50 ? 'bg-green-500' : hpPercent > 25 ? 'bg-yellow-500' : 'bg-red-500';
+              const bgColor = isAlive ? (member.isNativeAlly ? 'bg-amber-50 border-amber-300' : 'bg-blue-50 border-blue-300') : 'bg-gray-200 border-gray-400';
+              const textColor = isAlive ? 'text-gray-800' : 'text-gray-500';
+              const nativeIcon = member.isNativeAlly ? '🪶 ' : '';
+              
+              // Status effects badges
+              let statusBadges = '';
+              if (member.statusEffects && member.statusEffects.length > 0) {
+                statusBadges = member.statusEffects.map(effect => {
+                  let badgeClass = 'bg-gray-200 text-gray-700';
+                  let icon = '⚠️';
+                  if (effect === 'Bleeding') { badgeClass = 'bg-red-200 text-red-700'; icon = '💉'; }
+                  else if (effect === 'Poisoned') { badgeClass = 'bg-purple-200 text-purple-700'; icon = '☠️'; }
+                  else if (effect === 'Infected Wound') { badgeClass = 'bg-yellow-200 text-yellow-700'; icon = '🦠'; }
+                  return '<span class="inline-block px-2 py-0.5 rounded text-xs font-medium ' + badgeClass + '">' + icon + ' ' + effect + '</span>';
+                }).join(' ');
+              }
+              
+              // Stats line
+              const statsLine = isAlive 
+                ? (member.killCount > 0 ? '<span class="text-green-600">⚔️ ' + member.killCount + ' kill' + (member.killCount > 1 ? 's' : '') + '</span>' : '') +
+                  (member.damageDealt > 0 ? '<span class="text-blue-600 ml-2">💥 ' + member.damageDealt + ' dmg dealt</span>' : '')
+                : '<span class="text-gray-500 italic">Fallen in battle</span>';
+              
+              return '<div class="' + bgColor + ' border rounded-lg p-3 ' + textColor + '">' +
+                '<div class="flex items-center justify-between mb-2">' +
+                  '<span class="font-bold">' + nativeIcon + member.name + '</span>' +
+                  '<span class="text-sm">' + (isAlive ? '❤️ ' + member.currentHp + '/' + member.maxHp : '💀') + '</span>' +
+                '</div>' +
+                (isAlive ? '<div class="w-full bg-gray-300 rounded-full h-2 mb-2"><div class="' + hpColor + ' h-2 rounded-full" style="width: ' + hpPercent + '%"></div></div>' : '') +
+                (statusBadges ? '<div class="mb-2">' + statusBadges + '</div>' : '') +
+                '<div class="text-xs">' + statsLine + '</div>' +
+              '</div>';
+            }).join('');
+          }
         }
         
         renderParty();

@@ -372,8 +372,16 @@ api.post('/simulate-combat', async (c) => {
   const body = await c.req.json()
   const { party, enemies } = body
   
-  // Clone combatants for simulation
-  const partyMembers = party.map((p: any) => ({ ...p, currentHp: p.hp, stunned: false }))
+  // Clone combatants for simulation with status effects tracking
+  const partyMembers = party.map((p: any) => ({ 
+    ...p, 
+    currentHp: p.hp, 
+    maxHp: p.hp,
+    stunned: false,
+    statusEffects: [] as string[],
+    damageDealt: 0,
+    killCount: 0
+  }))
   const enemyForces = enemies.map((e: any) => ({ ...e, currentHp: e.hp, stunned: false }))
   
   const battleLog: string[] = []
@@ -469,9 +477,11 @@ api.post('/simulate-combat', async (c) => {
         if (attackRoll >= hitChance) {
           const actualDamage = target.abilities?.includes('Tough') ? Math.ceil(damage / 2) : damage
           target.currentHp -= actualDamage
+          member.damageDealt += actualDamage
           battleLog.push(`${member.name} hits ${target.name} for ${actualDamage} damage! (${target.currentHp}hp left)`)
           
           if (target.currentHp <= 0) {
+            member.killCount++
             battleLog.push(`${target.name} is defeated!`)
           }
         } else {
@@ -504,6 +514,28 @@ api.post('/simulate-combat', async (c) => {
         const toughNote = hasTough ? ' (Tough: half damage)' : ''
         battleLog.push(`${enemy.name} hits ${target.name} for ${actualDamage} damage!${toughNote} (${target.currentHp}hp left)`)
         
+        // Check for status effects from damage
+        // 20% chance of bleeding if hit for 2+ damage
+        if (actualDamage >= 2 && Math.random() < 0.20 && !target.statusEffects.includes('Bleeding')) {
+          target.statusEffects.push('Bleeding')
+          battleLog.push(`  💉 ${target.name} is now BLEEDING!`)
+        }
+        
+        // Some enemies can poison (Native Braves with poison arrows, animals)
+        const canPoison = enemy.name?.includes('Snake') || enemy.name?.includes('Spider') || 
+                         enemy.name?.includes('Scorpion') || (enemy.name?.includes('Brave') && Math.random() < 0.15)
+        if (canPoison && !target.statusEffects.includes('Poisoned')) {
+          target.statusEffects.push('Poisoned')
+          battleLog.push(`  ☠️ ${target.name} has been POISONED!`)
+        }
+        
+        // Wolf/Bear/Mountain Lion can cause infection (10% chance)
+        const canInfect = enemy.name?.includes('Wolf') || enemy.name?.includes('Bear') || enemy.name?.includes('Mountain Lion')
+        if (canInfect && Math.random() < 0.10 && !target.statusEffects.includes('Infected Wound')) {
+          target.statusEffects.push('Infected Wound')
+          battleLog.push(`  🦠 ${target.name} has an INFECTED WOUND!`)
+        }
+        
         if (target.currentHp <= 0) {
           battleLog.push(`${target.name} falls in battle!`)
         }
@@ -528,6 +560,16 @@ api.post('/simulate-combat', async (c) => {
     battleLog.push('=== DRAW (max rounds reached) ===')
   }
   
+  // Build detailed party report
+  battleLog.push('')
+  battleLog.push('═══ PARTY STATUS REPORT ═══')
+  for (const member of partyMembers) {
+    const status = member.currentHp <= 0 ? '💀 DECEASED' : `❤️ ${member.currentHp}/${member.maxHp} HP`
+    const effects = member.statusEffects.length > 0 ? ` [${member.statusEffects.join(', ')}]` : ''
+    const kills = member.killCount > 0 ? ` (${member.killCount} kills)` : ''
+    battleLog.push(`${member.name}: ${status}${effects}${kills}`)
+  }
+  
   return c.json({
     outcome,
     rounds: round,
@@ -537,6 +579,16 @@ api.post('/simulate-combat', async (c) => {
       party: partyMembers.filter((p: any) => p.currentHp <= 0),
       enemies: enemyForces.filter((e: any) => e.currentHp <= 0)
     },
+    partyReport: partyMembers.map((p: any) => ({
+      name: p.name,
+      currentHp: p.currentHp,
+      maxHp: p.maxHp,
+      alive: p.currentHp > 0,
+      statusEffects: p.statusEffects,
+      damageDealt: p.damageDealt,
+      killCount: p.killCount,
+      isNativeAlly: p.isNativeAlly || false
+    })),
     battleLog
   })
 })
