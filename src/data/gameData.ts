@@ -1,54 +1,39 @@
 // Oregon Trail Simulation - Complete Game Data
 // Updated with rules from teacher documents
 
-// Job Classes organized by tier
-export const JOB_CLASSES = {
-  level1: {
-    name: "Level 1 (Hard Mode)",
-    description: "For students with lower participation points",
-    jobs: [
-      { id: "missionary", name: "Missionary", funds: "random", health: 3, skills: ["Charisma", "Holy (Extra Life)", "Linguist"], notes: "Can revive 1 player once." },
-      { id: "teacher", name: "Teacher", funds: 10, health: 2, skills: ["Charisma", "Writing"], notes: "All party members get extra skill." },
-      { id: "soldier", name: "Soldier", funds: 10, health: 4, skills: ["Bravery", "Weapons", "Tough"], notes: "Immune to Fear." },
-      { id: "hunter", name: "Hunter", funds: 10, health: 4, skills: ["Weapons", "Travel", "Animals"], notes: "Essential for food gathering." },
-      { id: "lumberjack", name: "Lumberjack", funds: 10, health: 4, skills: ["Carry", "Woodworking (Mechanical)"], notes: "Great for wagon repair." },
-      { id: "herbalist", name: "Herbalist", funds: 5, health: 3, skills: ["Medicine 1", "Travel", "Herbalist"], notes: "Gather 2 berries/day guaranteed." },
-      { id: "shepherd", name: "Shepherd", funds: 10, health: 4, skills: ["Animals", "Travel"], notes: "Good with livestock." },
-      { id: "fisherman", name: "Fisherman", funds: 10, health: 4, skills: ["Water", "Fishing"], notes: "2x meat from fishing." },
-      { id: "ex_slave", name: "Ex-Slave", funds: 5, health: 5, skills: ["Tough", "Carry"], notes: "Extremely resilient." },
-      { id: "factory_worker", name: "Factory Worker", funds: 50, health: 2, skills: ["Mechanical"], notes: "Good for repairs." },
-      { id: "outlaw", name: "Outlaw", funds: "random", health: 3, skills: ["Trickery", "Travel"], notes: "Can steal/trick." },
-      { id: "cook", name: "Cook", funds: 10, health: 3, skills: ["Cooking"], notes: "Divides food consumption by 2." },
-      { id: "miner", name: "Miner", funds: 10, health: 3, skills: ["Dark Vision", "Carry", "Miner"], notes: "Get $50-$500 in caves." }
-    ]
-  },
-  level2: {
-    name: "Level 2 (Medium Mode)",
-    description: "For students with moderate participation points",
-    jobs: [
-      { id: "banker", name: "Banker", funds: 500, health: 2, skills: ["Money 2"], notes: "Buy 20% cheaper, sell 20% higher." },
-      { id: "veterinarian", name: "Veterinarian", funds: 50, health: 3, skills: ["Animals", "Medicine 1"], notes: "Heals animals & minor sickness." },
-      { id: "lawyer", name: "Lawyer", funds: 100, health: 2, skills: ["Charisma", "Trickery", "Writing"], notes: "" },
-      { id: "doctor", name: "Doctor", funds: 100, health: 3, skills: ["Medicine 2", "Charisma", "Extra Lv1-2 Skill"], notes: "Heals up to Disease II." },
-      { id: "fur_trapper", name: "Fur Trapper", funds: 50, health: 4, skills: ["Weapons", "Travel", "Water", "Fur-Trapper"], notes: "Double pelts from hunting." },
-      { id: "merchant", name: "Merchant", funds: 50, health: 3, skills: ["Money 2", "Travel", "Charisma", "Trickery"], notes: "Economic powerhouse." },
-      { id: "frontiersman", name: "Frontiersman", funds: 10, health: 5, skills: ["Weapons", "Travel", "Animals", "Tough"], notes: "Combat specialist." },
-      { id: "pirate", name: "Pirate", funds: 50, health: 4, skills: ["Weapons", "Trickery", "Water", "Swords"], notes: "" }
-    ]
-  },
-  level3: {
-    name: "Level 3 (Easy Mode)",
-    description: "For students with high participation points",
-    jobs: [
-      { id: "elder_statesman", name: "Elder Statesman", funds: 500, health: 2, skills: ["Charisma 3", "Writing 2", "Trickery"], notes: "2x VP at the end!" },
-      { id: "firebrand_preacher", name: "Firebrand Preacher", funds: 500, health: 3, skills: ["Charisma 3", "Writing 2", "Travel", "Holy 3", "Linguist"], notes: "Holy 3 = 3 Revives!" },
-      { id: "explorer", name: "Explorer", funds: 10, health: 5, skills: ["Charisma 2", "Brave", "Weapons", "Travel", "Tough"], notes: "Extra Lv1-2 skill. Ultimate survivor." },
-      { id: "surgeon", name: "Surgeon", funds: 500, health: 4, skills: ["Medicine 3", "Tough", "Cook", "Intelligence"], notes: "Heals all diseases." },
-      { id: "aristocrat", name: "European Aristocrat", funds: 1000, health: 3, skills: ["Charisma 2", "Weapons", "Animals", "Writing", "Swords"], notes: "Comes with Beautiful Sword ($1200). Extra VP!" },
-      { id: "inventor", name: "Inventor", funds: 500, health: 3, skills: ["Charisma", "Intelligence", "Mechanical 3"], notes: "Comes with Tesla Gun!" }
-    ]
-  }
-};
+// All Jobs in a single list (no difficulty tiers)
+export const ALL_JOBS = [
+  // Former Level 1 - Working Class
+  { id: "missionary", name: "Missionary", funds: "random", health: 3, skills: ["Charisma", "Holy (Extra Life)", "Linguist"], notes: "Can revive 1 player once.", category: "Working Class" },
+  { id: "teacher", name: "Teacher", funds: 10, health: 2, skills: ["Charisma", "Writing"], notes: "All party members get extra skill.", category: "Working Class" },
+  { id: "soldier", name: "Soldier", funds: 10, health: 4, skills: ["Bravery", "Weapons", "Tough"], notes: "Immune to Fear.", category: "Working Class" },
+  { id: "hunter", name: "Hunter", funds: 10, health: 4, skills: ["Weapons", "Travel", "Animals"], notes: "Essential for food gathering.", category: "Working Class" },
+  { id: "lumberjack", name: "Lumberjack", funds: 10, health: 4, skills: ["Carry", "Woodworking (Mechanical)"], notes: "Great for wagon repair.", category: "Working Class" },
+  { id: "herbalist", name: "Herbalist", funds: 5, health: 3, skills: ["Medicine 1", "Travel", "Herbalist"], notes: "Gather 2 berries/day guaranteed.", category: "Working Class" },
+  { id: "shepherd", name: "Shepherd", funds: 10, health: 4, skills: ["Animals", "Travel"], notes: "Good with livestock.", category: "Working Class" },
+  { id: "fisherman", name: "Fisherman", funds: 10, health: 4, skills: ["Water", "Fishing"], notes: "2x meat from fishing.", category: "Working Class" },
+  { id: "ex_slave", name: "Ex-Slave", funds: 5, health: 5, skills: ["Tough", "Carry"], notes: "Extremely resilient.", category: "Working Class" },
+  { id: "factory_worker", name: "Factory Worker", funds: 50, health: 2, skills: ["Mechanical"], notes: "Good for repairs.", category: "Working Class" },
+  { id: "outlaw", name: "Outlaw", funds: "random", health: 3, skills: ["Trickery", "Travel"], notes: "Can steal/trick.", category: "Working Class" },
+  { id: "cook", name: "Cook", funds: 10, health: 3, skills: ["Cooking"], notes: "Divides food consumption by 2.", category: "Working Class" },
+  { id: "miner", name: "Miner", funds: 10, health: 3, skills: ["Dark Vision", "Carry", "Miner"], notes: "Get $50-$500 in caves.", category: "Working Class" },
+  // Former Level 2 - Middle Class
+  { id: "banker", name: "Banker", funds: 500, health: 2, skills: ["Money 2"], notes: "Buy 20% cheaper, sell 20% higher.", category: "Middle Class" },
+  { id: "veterinarian", name: "Veterinarian", funds: 50, health: 3, skills: ["Animals", "Medicine 1"], notes: "Heals animals & minor sickness.", category: "Middle Class" },
+  { id: "lawyer", name: "Lawyer", funds: 100, health: 2, skills: ["Charisma", "Trickery", "Writing"], notes: "", category: "Middle Class" },
+  { id: "doctor", name: "Doctor", funds: 100, health: 3, skills: ["Medicine 2", "Charisma", "Extra Lv1-2 Skill"], notes: "Heals up to Disease II.", category: "Middle Class" },
+  { id: "fur_trapper", name: "Fur Trapper", funds: 50, health: 4, skills: ["Weapons", "Travel", "Water", "Fur-Trapper"], notes: "Double pelts from hunting.", category: "Middle Class" },
+  { id: "merchant", name: "Merchant", funds: 50, health: 3, skills: ["Money 2", "Travel", "Charisma", "Trickery"], notes: "Economic powerhouse.", category: "Middle Class" },
+  { id: "frontiersman", name: "Frontiersman", funds: 10, health: 5, skills: ["Weapons", "Travel", "Animals", "Tough"], notes: "Combat specialist.", category: "Middle Class" },
+  { id: "pirate", name: "Pirate", funds: 50, health: 4, skills: ["Weapons", "Trickery", "Water", "Swords"], notes: "", category: "Middle Class" },
+  // Former Level 3 - Elite Class
+  { id: "elder_statesman", name: "Elder Statesman", funds: 500, health: 2, skills: ["Charisma 3", "Writing 2", "Trickery"], notes: "2x VP at the end!", category: "Elite" },
+  { id: "firebrand_preacher", name: "Firebrand Preacher", funds: 500, health: 3, skills: ["Charisma 3", "Writing 2", "Travel", "Holy 3", "Linguist"], notes: "Holy 3 = 3 Revives!", category: "Elite" },
+  { id: "explorer", name: "Explorer", funds: 10, health: 5, skills: ["Charisma 2", "Brave", "Weapons", "Travel", "Tough"], notes: "Extra Lv1-2 skill. Ultimate survivor.", category: "Elite" },
+  { id: "surgeon", name: "Surgeon", funds: 500, health: 4, skills: ["Medicine 3", "Tough", "Cook", "Intelligence"], notes: "Heals all diseases.", category: "Elite" },
+  { id: "aristocrat", name: "European Aristocrat", funds: 1000, health: 3, skills: ["Charisma 2", "Weapons", "Animals", "Writing", "Swords"], notes: "Comes with Beautiful Sword ($1200). Extra VP!", category: "Elite" },
+  { id: "inventor", name: "Inventor", funds: 500, health: 3, skills: ["Charisma", "Intelligence", "Mechanical 3"], notes: "Comes with Tesla Gun!", category: "Elite" }
+];
 
 // Health levels reference
 export const HEALTH_LEVELS = {
@@ -92,25 +77,78 @@ export const NATIONALITIES = [
   { id: "welsh", name: "Welsh", bonuses: ["Dark vision (extra)"] }
 ];
 
-// Religions
+// Enhanced Religions with detailed effects
 export const RELIGIONS = [
-  { id: "protestant", name: "Protestant", effect: "Better relations with Protestants and Forts" },
-  { id: "catholic", name: "Catholic", effect: "Better relations with Catholics" },
-  { id: "mormon", name: "Mormon", effect: "Better relations with Mormons; males may bring extra spouses" },
-  { id: "none", name: "None/Indigenous", effect: "Better relations with American Indians (Cannot be Missionary/Firebrand Preacher)" }
+  { 
+    id: "protestant", 
+    name: "Protestant", 
+    effect: "Better relations with Protestants and Forts",
+    fortBonus: "+20% discount at US Forts",
+    missionBonus: "Free supplies at Whitman Mission",
+    tribalRelation: "Neutral",
+    specialAbility: "Can conduct Sunday service to remove Fear/Angry from party",
+    restrictions: []
+  },
+  { 
+    id: "catholic", 
+    name: "Catholic", 
+    effect: "Better relations with Catholics and Spanish-speaking peoples",
+    fortBonus: "Access to Catholic missions for free healing",
+    missionBonus: "+10% better prices at any mission",
+    tribalRelation: "Slightly negative with some tribes",
+    specialAbility: "Last Rites: Dying party member gets +50 VP",
+    restrictions: []
+  },
+  { 
+    id: "mormon", 
+    name: "Mormon", 
+    effect: "Better relations with Mormons at Fort Bridger and Fort Hall",
+    fortBonus: "50% discount at Mormon settlements",
+    missionBonus: "Can join Mormon wagon trains for safety",
+    tribalRelation: "Neutral",
+    specialAbility: "Males may bring extra spouses (+100 VP each)",
+    restrictions: ["No alcohol allowed", "Must tithe 10% of earnings"]
+  },
+  { 
+    id: "none", 
+    name: "None/Indigenous", 
+    effect: "Better relations with American Indians",
+    fortBonus: "No special bonus at forts",
+    missionBonus: "Cannot receive mission charity",
+    tribalRelation: "+2 with all native tribes",
+    specialAbility: "Can participate in tribal ceremonies for bonuses",
+    restrictions: ["Cannot be Missionary or Firebrand Preacher"]
+  }
+];
+
+// Barter items for native villages (no cash)
+export const BARTER_ITEMS = [
+  { id: "whiskey", name: "Whiskey", barterValue: 3, description: "Highly valued for trade" },
+  { id: "tobacco", name: "Tobacco", barterValue: 2, description: "Common trade good" },
+  { id: "glass_beads", name: "Glass Beads", barterValue: 4, description: "Decorative, highly prized" },
+  { id: "colorful_marbles", name: "Colorful Marbles", barterValue: 5, description: "Rare and beautiful" },
+  { id: "metal_tools", name: "Metal Tools", barterValue: 3, description: "Useful implements" },
+  { id: "blankets", name: "Blankets", barterValue: 4, description: "Warm and practical" },
+  { id: "cloth", name: "Cloth/Fabric", barterValue: 2, description: "For clothing" },
+  { id: "mirrors", name: "Small Mirrors", barterValue: 5, description: "Fascinating novelty" },
+  { id: "knives", name: "Metal Knives", barterValue: 4, description: "Superior to stone" },
+  { id: "rifles", name: "Rifles", barterValue: 10, description: "Powerful weapons" },
+  { id: "ammunition", name: "Ammunition", barterValue: 2, description: "For firearms" },
+  { id: "horses", name: "Horses", barterValue: 8, description: "Valuable animals" }
 ];
 
 // Supply Market (Base Prices at Independence)
 export const SUPPLIES = {
   weapons: [
-    { id: "hunting_rifle", name: "Hunting Rifle", price: 80, effect: "Range (one free shot)" },
-    { id: "long_rifle", name: "Long Rifle", price: 100, effect: "Extra range (two free, powerful shots)" },
-    { id: "pistol", name: "Pistol", price: 50, effect: "Quick" },
-    { id: "shotgun", name: "Shotgun", price: 80, effect: "Powerful" },
-    { id: "signature_handgun", name: "Signature Handgun", price: 140, effect: "Quick, powerful" },
-    { id: "sword", name: "Sword", price: 50, effect: "Melee" },
-    { id: "beautiful_sword", name: "Beautiful Sword", price: 1200, effect: "Powerful melee (free for Aristocrat)" },
-    { id: "tesla_gun", name: "Tesla Gun", price: 1000, effect: "??? (free for Inventor, cannot buy)" }
+    { id: "hunting_rifle", name: "Hunting Rifle", price: 80, effect: "Range (one free shot)", damage: 2 },
+    { id: "long_rifle", name: "Long Rifle", price: 100, effect: "Extra range (two free, powerful shots)", damage: 3 },
+    { id: "pistol", name: "Pistol", price: 50, effect: "Quick", damage: 1 },
+    { id: "shotgun", name: "Shotgun", price: 80, effect: "Powerful", damage: 2 },
+    { id: "signature_handgun", name: "Signature Handgun", price: 140, effect: "Quick, powerful", damage: 2 },
+    { id: "sword", name: "Sword", price: 50, effect: "Melee", damage: 1 },
+    { id: "beautiful_sword", name: "Beautiful Sword", price: 1200, effect: "Powerful melee (free for Aristocrat)", damage: 3 },
+    { id: "tesla_gun", name: "Tesla Gun", price: 1000, effect: "??? (free for Inventor, cannot buy)", damage: "special" },
+    { id: "bow_arrows", name: "Bow and Arrows", price: 20, effect: "Silent ranged weapon", damage: 1 }
   ],
   food: [
     { id: "chocolate", name: "Chocolate", price: 10, stack: 20, effect: "Food and other uses" },
@@ -134,56 +172,56 @@ export const SUPPLIES = {
     { id: "binoculars", name: "Binoculars", price: 50, stack: 1, effect: "See dangers at forts before entering" }
   ],
   animals: [
-    { id: "dog", name: "Dog", price: 5, slots: 2, effect: "Boosts attack (upgrade attack or tracking)" },
+    { id: "dog", name: "Dog", price: 5, slots: 2, effect: "Boosts attack (upgrade attack or tracking)", hp: 2, damage: 1 },
     { id: "donkey", name: "Donkey", price: 10, slots: 5, effect: "Carrying only" },
     { id: "ox", name: "Ox", price: 50, slots: 8, effect: "Required to pull wagon" },
-    { id: "horse", name: "Horse", price: 30, slots: 5, effect: "+1 travel speed OR 5 carry slots (not stackable). Ride in battle with Animals skill" }
+    { id: "horse", name: "Horse", price: 30, slots: 5, effect: "+1 travel speed OR 5 carry slots. Ride in battle with Animals skill", hp: 3, damage: 1 }
   ]
 };
 
-// Hunting Results (d20 or d22)
+// Hunting Results (d22) - Fixed to work correctly
 export const HUNTING_RESULTS = [
-  { roll: [1, 1], name: "Sprayed by Skunk", type: "Bad", meat: 0, fur: false, effect: "No food, lose an extra day" },
-  { roll: [2, 2], name: "Squirrel", type: "Small Game", meat: 1, fur: false },
-  { roll: [3, 3], name: "Rabbit", type: "Small Game", meat: 2, fur: false },
-  { roll: [4, 4], name: "Racoon", type: "Small Game", meat: 2, fur: false },
-  { roll: [5, 5], name: "Fat Possum", type: "Small Game", meat: 3, fur: false },
-  { roll: [6, 6], name: "Duck", type: "Small Game", meat: 2, fur: false },
-  { roll: [7, 7], name: "Pompous Goose", type: "Small Game", meat: 4, fur: false },
-  { roll: [8, 8], name: "Snake", type: "Small Game", meat: 1, fur: false },
-  { roll: [9, 9], name: "Beaver", type: "Fur Animal", meat: 2, fur: true, furCount: 2 },
-  { roll: [10, 10], name: "Fox", type: "Fur Animal", meat: 1, fur: true, furCount: 1 },
-  { roll: [11, 11], name: "Fat Groundhog", type: "Small Game", meat: 3, fur: false },
-  { roll: [12, 12], name: "Wild Honey", type: "Special", meat: 0, honey: 5, effect: "5 honey (doesn't spoil), faster movement when eaten" },
-  { roll: [13, 13], name: "Mountain Lion Ambush!", type: "Danger", meat: 0, damage: 1, effect: "Lose 1 health" },
-  { roll: [14, 14], name: "Deer", type: "Big Game", meat: 6, hide: 1 },
-  { roll: [15, 15], name: "Elk", type: "Big Game", meat: 12, hide: 1 },
-  { roll: [16, 16], name: "Moose", type: "Big Game", meat: 15, hide: 2 },
-  { roll: [17, 17], name: "Buffalo", type: "Big Game", meat: 40, hide: 4 },
-  { roll: [18, 18], name: "Mushrooms", type: "Special", effect: "Good: Remove ailment | Medium: +Health | Bad: Death" },
-  { roll: [19, 19], name: "Wolf", type: "Predator", meat: 5, fur: true, combat: "Level 1", peltValue: 20 },
-  { roll: [20, 20], name: "Black Bear", type: "Predator", meat: 12, fur: true, combat: "Level 2", peltValue: 100 },
-  { roll: [21, 21], name: "Grizzly Bear!", type: "Predator", meat: 16, fur: true, combat: "Level 3", peltValue: 100 },
-  { roll: [22, 30], name: "Random Event", type: "Event", effect: "Roll on Event table" }
+  { roll: 1, name: "Sprayed by Skunk", type: "Bad", meat: 0, fur: false, effect: "No food, lose an extra day" },
+  { roll: 2, name: "Squirrel", type: "Small Game", meat: 1, fur: false },
+  { roll: 3, name: "Rabbit", type: "Small Game", meat: 2, fur: false },
+  { roll: 4, name: "Racoon", type: "Small Game", meat: 2, fur: false },
+  { roll: 5, name: "Fat Possum", type: "Small Game", meat: 3, fur: false },
+  { roll: 6, name: "Duck", type: "Small Game", meat: 2, fur: false },
+  { roll: 7, name: "Pompous Goose", type: "Small Game", meat: 4, fur: false },
+  { roll: 8, name: "Snake", type: "Small Game", meat: 1, fur: false },
+  { roll: 9, name: "Beaver", type: "Fur Animal", meat: 2, fur: true, furCount: 2 },
+  { roll: 10, name: "Fox", type: "Fur Animal", meat: 1, fur: true, furCount: 1 },
+  { roll: 11, name: "Fat Groundhog", type: "Small Game", meat: 3, fur: false },
+  { roll: 12, name: "Wild Honey", type: "Special", meat: 0, honey: 5, effect: "5 honey (doesn't spoil), faster movement when eaten" },
+  { roll: 13, name: "Mountain Lion Ambush!", type: "Danger", meat: 0, damage: 1, effect: "Lose 1 health", combat: true },
+  { roll: 14, name: "Deer", type: "Big Game", meat: 6, hide: 1 },
+  { roll: 15, name: "Elk", type: "Big Game", meat: 12, hide: 1 },
+  { roll: 16, name: "Moose", type: "Big Game", meat: 15, hide: 2 },
+  { roll: 17, name: "Buffalo", type: "Big Game", meat: 40, hide: 4 },
+  { roll: 18, name: "Mushrooms", type: "Special", effect: "Roll d6: 1-2 Good (Remove ailment), 3-4 Medium (+1 Health), 5-6 Bad (Poisoned!)" },
+  { roll: 19, name: "Wolf", type: "Predator", meat: 5, fur: true, furCount: 1, combat: true, combatLevel: 1, peltValue: 20 },
+  { roll: 20, name: "Black Bear", type: "Predator", meat: 12, fur: true, furCount: 1, combat: true, combatLevel: 2, peltValue: 100 },
+  { roll: 21, name: "Grizzly Bear!", type: "Predator", meat: 16, fur: true, furCount: 1, combat: true, combatLevel: 3, peltValue: 100 },
+  { roll: 22, name: "Random Event", type: "Event", effect: "Roll on Random Event table (d100)" }
 ];
 
 // Fishing Results (d12)
 export const FISHING_RESULTS = [
-  { roll: [1, 1], name: "No Fish", meat: 0 },
-  { roll: [2, 2], name: "Bluegill", meat: 1 },
-  { roll: [3, 3], name: "Bass", meat: 2 },
-  { roll: [4, 4], name: "Trout", meat: 3 },
-  { roll: [5, 5], name: "Salmon", meat: 4 },
-  { roll: [6, 6], name: "Big Salmon", meat: 5 },
-  { roll: [7, 7], name: "Fat Carp", meat: 6 },
-  { roll: [8, 8], name: "Duck", meat: 2 },
-  { roll: [9, 9], name: "Pike", meat: 3 },
-  { roll: [10, 10], name: "Catfish", meat: 2 },
-  { roll: [11, 11], name: "Beaver", meat: 2, fur: true, furCount: 2 },
-  { roll: [12, 12], name: "Otter", meat: 2, fur: true, furCount: 2 }
+  { roll: 1, name: "No Fish", meat: 0 },
+  { roll: 2, name: "Bluegill", meat: 1 },
+  { roll: 3, name: "Bass", meat: 2 },
+  { roll: 4, name: "Trout", meat: 3 },
+  { roll: 5, name: "Salmon", meat: 4 },
+  { roll: 6, name: "Big Salmon", meat: 5 },
+  { roll: 7, name: "Fat Carp", meat: 6 },
+  { roll: 8, name: "Duck", meat: 2 },
+  { roll: 9, name: "Pike", meat: 3 },
+  { roll: 10, name: "Catfish", meat: 2 },
+  { roll: 11, name: "Beaver", meat: 2, fur: true, furCount: 2 },
+  { roll: 12, name: "Otter", meat: 2, fur: true, furCount: 2 }
 ];
 
-// Random Events (d100, 1-83 range with specific entries)
+// Random Events (d100)
 export const RANDOM_EVENTS = [
   { roll: [1, 1], id: "hear_fighting", name: "Hear Fighting", description: "Hear fighting in the distance. Investigate? If YES: Join fight to save Indian guide who joins party (Fight Level-2). If NO: No effect", decision: true },
   { roll: [2, 8], id: "cave", name: "Find a Cave", description: "Explore? Need torch (99% death without). Find: Treasure, Supplies, Enemy, Tunnel shortcut, or send child through small entrance", decision: true },
@@ -197,7 +235,7 @@ export const RANDOM_EVENTS = [
   { roll: [30, 30], id: "sasquatch", name: "Sasquatch!", description: "Find Sasquatch (looks suspiciously like Gabe!). Fight? YES + Victory = 400 VP. NO = No one believes you", combat: true, vp: 400 },
   { roll: [31, 31], id: "jackalope", name: "Jackalope!", description: "Something small watches you. Need Whiskey AND Animal skill to find elusive Jackalope (+100 VP)", requirement: "Whiskey + Animals", vp: 100 },
   { roll: [32, 40], id: "wild_fruit", name: "Wild Fruit/Berries", description: "Find wild fruit and berries", loot: "+5 Fruit" },
-  { roll: [41, 41], id: "shaman", name: "Native Shaman", description: "Can remove status ailments for $50", service: "$50" },
+  { roll: [41, 41], id: "shaman", name: "Native Shaman", description: "Can remove status ailments. Barter required (value 3+)", service: "Barter" },
   { roll: [42, 48], id: "get_lost", name: "Get Lost!", description: "Your party gets lost. Lose 1-4 days of travel", effect: "Lose 1-4 days" },
   { roll: [49, 51], id: "injured", name: "Injured", description: "Someone is injured. Lose 1 health", effect: "-1 Health" },
   { roll: [52, 53], id: "badly_injured", name: "Badly Injured", description: "Someone is badly injured. Lose 2 health", effect: "-2 Health" },
@@ -242,29 +280,32 @@ export const TREASURES = {
   ]
 };
 
-// Enemies
+// Enemies with combat stats
 export const ENEMIES = [
-  { id: "brave_tomahawk", name: "Brave (Tomahawk)", weapon: "melee", hp: 3, abilities: [] },
-  { id: "brave_archer", name: "Brave (Archer)", weapon: "Range 1", hp: 2, abilities: [] },
-  { id: "brave_gunner", name: "Brave (Gunner)", weapon: "Range 2", hp: 2, abilities: [] },
-  { id: "horseman", name: "Horseman", weapon: "melee", hp: 4, abilities: ["Swift"] },
-  { id: "horse_archer", name: "Horse Archer", weapon: "Range 1", hp: 4, abilities: ["Swift"] },
-  { id: "war_chief", name: "War Chief", weapon: "melee", hp: 5, abilities: ["Tough"] },
-  { id: "medicine_man", name: "Medicine Man", weapon: "n/a", hp: 3, abilities: ["Heals 2hp/turn"] },
-  { id: "dog", name: "Dog", weapon: "melee", hp: 2, abilities: [] },
-  { id: "wolf", name: "Wolf", weapon: "melee", hp: 3, abilities: [] },
-  { id: "alpha_wolf", name: "Alpha Wolf", weapon: "melee", hp: 4, abilities: ["Tough"] },
-  { id: "black_bear", name: "Black Bear", weapon: "melee", hp: 5, abilities: ["Tough"] },
-  { id: "grizzly_bear", name: "Grizzly Bear", weapon: "melee", hp: 8, abilities: ["Tough", "Bleeding"] },
-  { id: "legendary_bear", name: "Legendary Bear", weapon: "melee", hp: 20, abilities: ["Tough", "Bleeding"] },
-  { id: "sasquatch", name: "Sasquatch", weapon: "melee", hp: 30, abilities: ["Tough", "Dismember"] },
-  { id: "raptor", name: "Raptor", weapon: "melee", hp: 20, abilities: ["Tough", "Bleeding"] },
-  { id: "fort_soldier", name: "Fort Soldier", weapon: "Range 1", hp: 4, abilities: [] },
-  { id: "fort_commander", name: "Fort Commander", weapon: "Range 1", hp: 3, abilities: ["Signature Handgun"] },
-  { id: "fort_horseman", name: "Fort Horseman", weapon: "Range 1", hp: 4, abilities: ["Swift"] },
-  { id: "fort_artillery", name: "Fort Artillery", weapon: "Range 4", hp: 2, abilities: ["1 Auto Kill"] },
-  { id: "mountainman", name: "Mountainman", weapon: "Range 2", hp: 5, abilities: ["Tough"] },
-  { id: "gunslinger", name: "Gunslinger", weapon: "Range 1", hp: 4, abilities: [] }
+  { id: "brave_tomahawk", name: "Brave (Tomahawk)", weapon: "melee", hp: 3, damage: 1, abilities: [] },
+  { id: "brave_archer", name: "Brave (Archer)", weapon: "Range 1", hp: 2, damage: 1, abilities: [] },
+  { id: "brave_gunner", name: "Brave (Gunner)", weapon: "Range 2", hp: 2, damage: 2, abilities: [] },
+  { id: "horseman", name: "Horseman", weapon: "melee", hp: 4, damage: 2, abilities: ["Swift"] },
+  { id: "horse_archer", name: "Horse Archer", weapon: "Range 1", hp: 4, damage: 1, abilities: ["Swift"] },
+  { id: "war_chief", name: "War Chief", weapon: "melee", hp: 5, damage: 2, abilities: ["Tough"] },
+  { id: "medicine_man", name: "Medicine Man", weapon: "n/a", hp: 3, damage: 0, abilities: ["Heals 2hp/turn"] },
+  { id: "dog", name: "Dog", weapon: "melee", hp: 2, damage: 1, abilities: [] },
+  { id: "wolf", name: "Wolf", weapon: "melee", hp: 3, damage: 1, abilities: [] },
+  { id: "alpha_wolf", name: "Alpha Wolf", weapon: "melee", hp: 4, damage: 2, abilities: ["Tough"] },
+  { id: "black_bear", name: "Black Bear", weapon: "melee", hp: 5, damage: 2, abilities: ["Tough"] },
+  { id: "grizzly_bear", name: "Grizzly Bear", weapon: "melee", hp: 8, damage: 3, abilities: ["Tough", "Bleeding"] },
+  { id: "legendary_bear", name: "Legendary Bear", weapon: "melee", hp: 20, damage: 4, abilities: ["Tough", "Bleeding"] },
+  { id: "sasquatch", name: "Sasquatch", weapon: "melee", hp: 30, damage: 5, abilities: ["Tough", "Dismember"] },
+  { id: "raptor", name: "Raptor", weapon: "melee", hp: 20, damage: 4, abilities: ["Tough", "Bleeding"] },
+  { id: "fort_soldier", name: "Fort Soldier", weapon: "Range 1", hp: 4, damage: 2, abilities: [] },
+  { id: "fort_commander", name: "Fort Commander", weapon: "Range 1", hp: 3, damage: 3, abilities: ["Signature Handgun"] },
+  { id: "fort_horseman", name: "Fort Horseman", weapon: "Range 1", hp: 4, damage: 2, abilities: ["Swift"] },
+  { id: "fort_artillery", name: "Fort Artillery", weapon: "Range 4", hp: 2, damage: 10, abilities: ["1 Auto Kill"] },
+  { id: "mountainman", name: "Mountainman", weapon: "Range 2", hp: 5, damage: 3, abilities: ["Tough"] },
+  { id: "gunslinger", name: "Gunslinger", weapon: "Range 1", hp: 4, damage: 2, abilities: [] },
+  { id: "bandit", name: "Bandit", weapon: "Range 1", hp: 3, damage: 1, abilities: [] },
+  { id: "bandit_leader", name: "Bandit Leader", weapon: "Range 2", hp: 5, damage: 2, abilities: ["Tough"] },
+  { id: "mountain_lion", name: "Mountain Lion", weapon: "melee", hp: 4, damage: 2, abilities: ["Swift"] }
 ];
 
 // Fight Levels
@@ -277,7 +318,7 @@ export const FIGHT_LEVELS = {
 // Status Effects
 export const STATUS_EFFECTS = {
   negative: [
-    { id: "depressed", name: "Depressed", effect: "Travel takes 3x as long", icon: "😔" },
+    { id: "depressed", name: "Depressed", effect: "Travel time divided by 3", icon: "😔", travelDivisor: 3 },
     { id: "disease_1", name: "Disease I", effect: "Lose 1 health per 5 days", icon: "🤒" },
     { id: "disease_2", name: "Disease II", effect: "Lose 2 health per 4 days", icon: "🤢" },
     { id: "disease_3", name: "Disease III", effect: "Lose 3 health per 3 days", icon: "☠️" },
@@ -285,147 +326,230 @@ export const STATUS_EFFECTS = {
     { id: "insane", name: "Insane", effect: "Becomes enemy after 7 days if not cured", icon: "🤪" },
     { id: "cannibal", name: "Cannibal", effect: "Randomly eats party member every night until cured/killed", icon: "👹" },
     { id: "cursed", name: "Cursed", effect: "Suffers from Fear trait", icon: "🔮" },
-    { id: "fear", name: "Fear", effect: "-1 health, travel takes 2x as long", icon: "😨" },
-    { id: "angry", name: "Angry", effect: "Travel takes 2x as long (remove with Charisma)", icon: "😠" },
+    { id: "fear", name: "Fear", effect: "-1 health, travel time divided by 3", icon: "😨", travelDivisor: 3 },
+    { id: "angry", name: "Angry", effect: "Travel time divided by 3 (remove with Charisma)", icon: "😠", travelDivisor: 3 },
     { id: "poisoned", name: "Poisoned", effect: "Lose 1 health per day", icon: "🐍" },
     { id: "bleeding", name: "Bleeding", effect: "Lose 2 health per day", icon: "🩸" }
   ],
   positive: [
-    { id: "happy", name: "Happy", effect: "2x faster movement", icon: "😊" },
+    { id: "happy", name: "Happy", effect: "2x faster movement", icon: "😊", travelMultiplier: 2 },
     { id: "blessed", name: "Blessed", effect: "+1 health (even over cap)", icon: "✨" }
   ]
 };
 
 // Trail Route with locations
 export const TRAIL_STOPS = [
-  { id: "independence", name: "Independence, MO", distance: 0, daysFromPrev: 0, type: "start", description: "Starting point - Buy supplies!" },
-  { id: "courthouse_rock", name: "Courthouse Rock", distance: 480, daysFromPrev: 5, type: "landmark", description: "Waypoint" },
-  { id: "chimney_rock", name: "Chimney Rock", distance: 12, daysFromPrev: 1, type: "village", description: "Lakota-Sioux Village nearby" },
-  { id: "fort_laramie", name: "Fort Laramie", distance: 70, daysFromPrev: 2, type: "fort", description: "Major Trading Post" },
-  { id: "independence_rock", name: "Independence Rock", distance: 190, daysFromPrev: 12, type: "landmark", description: "Famous landmark" },
-  { id: "fort_bridger", name: "Fort Bridger", distance: 225, daysFromPrev: 15, type: "fort", description: "Mormon Settlement (20% Dysentery)" },
-  { id: "soda_springs", name: "Soda Springs", distance: 162, daysFromPrev: 8, type: "landmark", description: "Natural springs" },
-  { id: "fort_hall", name: "Fort Hall", distance: 57, daysFromPrev: 2, type: "fort", description: "Mormon area, Shoshone Village nearby (3 days)" },
-  { id: "fort_boise", name: "Fort Boise", distance: 280, daysFromPrev: 16, type: "fort", description: "50% Tuberculosis! High prices" },
-  { id: "whitman_mission", name: "Whitman Mission", distance: 220, daysFromPrev: 12, type: "mission", description: "30% Measles. Holy 3 = Free items, Holy 1 = 50% off" },
-  { id: "the_dalles", name: "The Dalles", distance: 120, daysFromPrev: 7, type: "crossing", description: "River crossing & trade center" },
-  { id: "oregon_city", name: "Oregon City", distance: 100, daysFromPrev: 5, type: "end", description: "Finish Line! +500 VP" }
+  { id: "independence", name: "Independence, MO", distance: 0, daysFromPrev: 0, type: "start", description: "Starting point - Buy supplies!", terrain: "plains" },
+  { id: "courthouse_rock", name: "Courthouse Rock", distance: 480, daysFromPrev: 5, type: "landmark", description: "Waypoint", terrain: "plains" },
+  { id: "chimney_rock", name: "Chimney Rock", distance: 12, daysFromPrev: 1, type: "village", description: "Lakota-Sioux Village nearby", terrain: "plains" },
+  { id: "fort_laramie", name: "Fort Laramie", distance: 70, daysFromPrev: 2, type: "fort", description: "Major Trading Post", terrain: "plains" },
+  { id: "independence_rock", name: "Independence Rock", distance: 190, daysFromPrev: 12, type: "landmark", description: "Famous landmark", terrain: "mountains" },
+  { id: "fort_bridger", name: "Fort Bridger", distance: 225, daysFromPrev: 15, type: "fort", description: "Mormon Settlement (20% Dysentery)", terrain: "mountains" },
+  { id: "soda_springs", name: "Soda Springs", distance: 162, daysFromPrev: 8, type: "landmark", description: "Natural springs", terrain: "mountains" },
+  { id: "fort_hall", name: "Fort Hall", distance: 57, daysFromPrev: 2, type: "fort", description: "Mormon area, Shoshone Village nearby (3 days)", terrain: "mountains" },
+  { id: "fort_boise", name: "Fort Boise", distance: 280, daysFromPrev: 16, type: "fort", description: "50% Tuberculosis! High prices", terrain: "mountains" },
+  { id: "whitman_mission", name: "Whitman Mission", distance: 220, daysFromPrev: 12, type: "mission", description: "30% Measles. Holy 3 = Free items, Holy 1 = 50% off", terrain: "mountains" },
+  { id: "the_dalles", name: "The Dalles", distance: 120, daysFromPrev: 7, type: "crossing", description: "River crossing & trade center", terrain: "river" },
+  { id: "oregon_city", name: "Oregon City", distance: 100, daysFromPrev: 5, type: "end", description: "Finish Line! +500 VP", terrain: "plains" }
 ];
 
-// Trading Posts inventory
-export const TRADING_POSTS = {
+// Native Villages (Barter only - no cash)
+export const NATIVE_VILLAGES = {
   chimney_rock: {
     name: "Chimney Rock - Lakota-Sioux Village",
+    tribe: "Lakota-Sioux",
+    isNativeVillage: true,
+    barterOnly: true,
     items: [
-      { name: "Fruit", price: 6, amount: 2, effect: "Spoils quickly" },
-      { name: "Meat", price: 2, amount: 20, effect: "Spoils quickly" },
-      { name: "Whiskey", price: 50, amount: 0 },
-      { name: "Glass Marbles", price: 200, amount: 0 },
-      { name: "Totem Stick", price: 500, amount: "SOLD OUT", effect: "Relation Boost w/ Indians" },
-      { name: "Bow and Arrows", price: 20, amount: 5, effect: "Ranged weapon" },
-      { name: "Animal Furs", price: 10, amount: "SOLD OUT" },
-      { name: "Horse", price: 30, amount: 2 },
-      { name: "Animal Trainer", price: 100, amount: "up to level 3", effect: "Combat (dog) + Carry weight" }
+      { name: "Fruit", barterValue: 1, amount: 2, effect: "Spoils quickly" },
+      { name: "Meat", barterValue: 1, amount: 20, effect: "Spoils quickly" },
+      { name: "Totem Stick", barterValue: 8, amount: 1, effect: "Relation Boost w/ Indians" },
+      { name: "Bow and Arrows", barterValue: 3, amount: 5, effect: "Ranged weapon" },
+      { name: "Animal Furs", barterValue: 2, amount: 5 },
+      { name: "Horse", barterValue: 6, amount: 2 },
+      { name: "Pemmican (dried meat)", barterValue: 2, amount: 10, effect: "Never spoils" },
+      { name: "Moccasins", barterValue: 2, amount: 3, effect: "+1 Travel speed for 3 days" },
+      { name: "Buffalo Robe", barterValue: 4, amount: 2, effect: "Protection from cold" }
     ],
-    activities: ["Steal Idol (Trickery - Tribe Angry)", "Horseback Race (Animals)", "Right of Manhood (Tough)", "Convert Tribe (Missionary - +500VP + Indian Guard)", "Join Dance", "Free Whiskey Request", "Argument (Linguist)"]
+    activities: [
+      "Steal Idol (Trickery - Tribe becomes hostile)",
+      "Horseback Race (Animals skill - Win a horse!)",
+      "Right of Manhood (Tough - Earn tribal respect)",
+      "Convert Tribe (Missionary only - +500VP + Indian Guard joins)",
+      "Join Dance (Free - +1 tribal relation)",
+      "Trade Stories (Linguist - Learn local dangers)",
+      "Challenge Warrior (Combat - Win respect or lose 1 HP)"
+    ]
   },
+  shoshone: {
+    name: "Shoshone Indian Village",
+    tribe: "Shoshone",
+    isNativeVillage: true,
+    barterOnly: true,
+    items: [
+      { name: "Meat", barterValue: 1, amount: 10 },
+      { name: "Furs", barterValue: 3, amount: 10 },
+      { name: "Dog", barterValue: 2, amount: 3 },
+      { name: "Horse", barterValue: 5, amount: 2 },
+      { name: "Salmon (dried)", barterValue: 2, amount: 15, effect: "Never spoils" },
+      { name: "Camas Root", barterValue: 1, amount: 20, effect: "Nutritious food" },
+      { name: "Obsidian Knife", barterValue: 3, amount: 2, effect: "Sharp tool" },
+      { name: "Healing Herbs", barterValue: 4, amount: 3, effect: "Cure Disease I" }
+    ],
+    activities: [
+      "Steal Idol (Trickery - Tribe becomes hostile)",
+      "Buffalo Hunt (Animals+Horse+Weapons - Large meat haul)",
+      "Right of Manhood (Endurance - Earn tribal respect)",
+      "Salmon Fishing (Fishing skill - Double fish catch)",
+      "Duck Hunt (Hunter - Get 5 duck meat)",
+      "Chieftain's Son joins party (Charisma - 3hp Tough melee ally)",
+      "Marry into Tribe (Free spouse! Must stay 7 days)"
+    ]
+  },
+  the_dalles: {
+    name: "The Dalles Village Trade Center",
+    tribe: "Chinook",
+    isNativeVillage: true,
+    barterOnly: true,
+    items: [
+      { name: "Salmon", barterValue: 1, amount: 30, effect: "Fresh fish" },
+      { name: "Dried Salmon", barterValue: 2, amount: 20, effect: "Never spoils" },
+      { name: "Furs", barterValue: 3, amount: 10 },
+      { name: "Canoe Passage", barterValue: 5, amount: 1, effect: "Safe river crossing" },
+      { name: "Cedar Rope", barterValue: 1, amount: 10, effect: "Strong rope" },
+      { name: "Woven Basket", barterValue: 2, amount: 5, effect: "+2 carry slots" }
+    ],
+    activities: [
+      "River Guide (Linguist - Safe passage advice)",
+      "Fishing Competition (Fishing - Win supplies)",
+      "Trade Negotiations (Charisma 2 - Better rates)",
+      "Portage Help (Pay 3 barter value - Safe wagon transport)",
+      "Weather Prediction (Intelligence - Know best travel days)",
+      "Purchase Canoe (8 barter value - Skip land route)"
+    ]
+  }
+};
+
+// Trading Posts (Forts - use cash)
+export const TRADING_POSTS = {
   fort_laramie: {
     name: "Fort Laramie",
+    isNativeVillage: false,
     items: [
       { name: "Food Cans", price: 7, amount: 20 },
       { name: "First Aid Kit", price: 20, amount: 20 },
       { name: "Meat", price: 10, amount: 50 },
       { name: "Whiskey", price: 25, amount: 10 },
-      { name: "Hunting Rifle", price: 90, amount: "SOLD OUT" },
-      { name: "Pistol", price: 60, amount: "SOLD OUT" },
+      { name: "Hunting Rifle", price: 90, amount: 2 },
+      { name: "Pistol", price: 60, amount: 3 },
       { name: "Rope", price: 5, amount: 20 },
       { name: "Torch", price: 5, amount: 20 },
-      { name: "Dynamite", price: 15, amount: "SOLD OUT" },
+      { name: "Dynamite", price: 15, amount: 5 },
       { name: "Shovel", price: 10, amount: 2 },
       { name: "Donkey", price: 40, amount: 1 },
-      { name: "Furs (sell)", price: 50, amount: 0 }
+      { name: "Furs (sell)", price: 50, amount: 0, sellOnly: true }
     ],
-    activities: ["Gamble (Trickery: $1-300)", "Fiery Sermon (Holy 3: $1-500)", "Ask Donations (Holy 1: $1-25)", "Mysterious Stranger (Shortcut $50)", "Tavern Brawl (Tough)", "Trouble with Law (Charisma 2)", "Balance Books (Money 2)"]
+    activities: [
+      "Gamble (Trickery: Win/Lose $1-300)",
+      "Fiery Sermon (Holy 3: Collect $1-500)",
+      "Ask Donations (Holy 1: Collect $1-25)",
+      "Mysterious Stranger (Pay $50 for shortcut info)",
+      "Tavern Brawl (Tough: Win $20 or lose 1 HP)",
+      "Trouble with Law (Charisma 2 or pay $50 fine)",
+      "Balance Books (Money 2: Earn $25)"
+    ]
   },
   fort_bridger: {
-    name: "Fort Bridger (20% Dysentery)",
+    name: "Fort Bridger (20% Dysentery Risk)",
+    isNativeVillage: false,
+    diseaseRisk: { type: "Dysentery", chance: 20 },
     items: [
       { name: "Food Cans", price: 14, amount: 4 },
-      { name: "First Aid Kit", price: 50, amount: "SOLD OUT" },
+      { name: "First Aid Kit", price: 50, amount: 2 },
       { name: "Meat", price: 10, amount: 12 },
       { name: "Whiskey", price: 15, amount: 20 },
       { name: "Rope", price: 5, amount: 7 },
-      { name: "Dog", price: 0, amount: "SOLD OUT", effect: "FREE!" },
-      { name: "Coonskin Cap", price: 2, amount: "SOLD OUT", effect: "+1 Range on all guns for 1 character" },
+      { name: "Dog", price: 5, amount: 1 },
+      { name: "Coonskin Cap", price: 25, amount: 1, effect: "+1 Range on all guns for 1 character" },
       { name: "Climbing Gear", price: 15, amount: 4 }
     ],
-    activities: ["Gamble (Trickster: $1-5)", "Mysterious Stranger (Shortcut $50)", "Trouble with Law (Charisma 1)", "Fight Legendary Bear (Weapons+Bravery, 3 days)", "Emmett Lombardi the Mountain Man (5hp Tough, drops Coonskin Cap)"]
+    activities: [
+      "Gamble (Trickster: Win/Lose $1-50)",
+      "Mysterious Stranger (Pay $50 for shortcut info)",
+      "Trouble with Law (Charisma 1 or pay $25 fine)",
+      "Fight Legendary Bear (Weapons+Bravery: 3 days, huge pelt)",
+      "Meet Emmett Lombardi (Mountainman - hire for $100)"
+    ]
   },
   fort_hall: {
-    name: "Fort Hall",
+    name: "Fort Hall (Mormon Settlement)",
+    isNativeVillage: false,
+    mormonSettlement: true,
     items: [
       { name: "Food Cans", price: 10, amount: 15 },
       { name: "First Aid Kit", price: 40, amount: 3 },
-      { name: "Meat", price: 5, amount: "SOLD OUT" },
+      { name: "Meat", price: 5, amount: 10 },
       { name: "Climbing Gear", price: 20, amount: 5 },
-      { name: "Furs (sell)", price: 50, amount: 5 }
+      { name: "Furs (sell)", price: 50, amount: 5, sellOnly: true }
     ],
-    activities: ["No Gambling - FIGHT", "No Proselytizing (Mormons) - FIGHT", "Argument with Mormon Preacher (Holy 3 or FIGHT)", "Children convert to Mormonism", "Found drinking alcohol - FIGHT"],
+    activities: [
+      "Gamble - FORBIDDEN (Start fight if caught!)",
+      "Proselytize - FORBIDDEN for non-Mormons (Start fight!)",
+      "Argument with Mormon Preacher (Holy 3 or Fight)",
+      "Children may convert to Mormonism",
+      "Found drinking alcohol (Fight or pay $100)"
+    ],
     nearbyVillage: "Shoshone Village (3 days travel)"
   },
-  shoshone_fort_hall: {
-    name: "Shoshone Indian Village (near Fort Hall)",
-    items: [
-      { name: "Meat", price: 2, amount: 10 },
-      { name: "Furs", price: 20, amount: 10 },
-      { name: "Dog", price: 1, amount: 3 },
-      { name: "Horse", price: 20, amount: 2 }
-    ],
-    activities: ["Steal Idol (Trickery)", "Buffalo Hunt (Animals+Horse+Weapons)", "Right of Manhood (Endurance)", "Salmon Fishing (Fishing)", "Duck Hunt (Hunter)", "Chieftain's Son joins party (3hp Tough melee)", "Marry into Tribe"]
-  },
   fort_boise: {
-    name: "Fort Boise (50% Tuberculosis!)",
+    name: "Fort Boise (50% Tuberculosis Risk!)",
+    isNativeVillage: false,
+    diseaseRisk: { type: "Tuberculosis", chance: 50 },
     items: [
-      { name: "Hunting Rifle", price: 70, amount: "SOLD OUT" },
-      { name: "Elephant Gun", price: 120, amount: "SOLD OUT", effect: "Range + Power" },
+      { name: "Hunting Rifle", price: 70, amount: 1 },
+      { name: "Elephant Gun", price: 120, amount: 1, effect: "Range + Power" },
       { name: "Shotgun", price: 82, amount: 2 },
       { name: "Dynamite", price: 7, amount: 5 },
       { name: "Horse", price: 32, amount: 5 },
       { name: "Rope", price: 3, amount: 5 },
-      { name: "Torch", price: 1, amount: "SOLD OUT" },
+      { name: "Torch", price: 1, amount: 5 },
       { name: "First Aid Kit", price: 50, amount: 7 },
       { name: "Whiskey", price: 10, amount: 20 },
       { name: "Food Cans", price: 5, amount: 60 },
       { name: "Meat", price: 2, amount: 40 },
       { name: "Fireworks", price: 10, amount: 10 },
-      { name: "Snowshoes", price: 10, amount: "SOLD OUT", effect: "Move through snow (1 day per snowshoe)" },
+      { name: "Snowshoes", price: 10, amount: 3, effect: "Move through snow" },
       { name: "Climbing Gear", price: 12, amount: 7 }
     ],
-    activities: ["Commander's Wife wants chocolates ($50 per chocolate!)", "Female company = 10% better bartering per day", "Rodeo (Animals: win $50!)", "Hire Ulrich Zwingli (Swiss Mountaineer + Long Rifle + Binoculars, Charisma 2, 2x mountain movement)"]
+    activities: [
+      "Commander's Wife wants chocolates (Pay $50 per chocolate!)",
+      "Female company (10% better bartering per day)",
+      "Rodeo (Animals skill: Win $50!)",
+      "Hire Ulrich Zwingli (Swiss Mountaineer: $150)"
+    ]
   },
   whitman_mission: {
-    name: "Whitman Mission (30% Measles)",
+    name: "Whitman Mission (30% Measles Risk)",
+    isNativeVillage: false,
+    diseaseRisk: { type: "Measles", chance: 30 },
     items: [
       { name: "Meat", price: 10, amount: 10 },
       { name: "Fruit", price: 12, amount: 5 },
-      { name: "Rope", price: 5, amount: "SOLD OUT" },
-      { name: "Snowshoes", price: 3, amount: "SOLD OUT" },
+      { name: "Rope", price: 5, amount: 5 },
+      { name: "Snowshoes", price: 3, amount: 2 },
       { name: "Wine", price: 20, amount: 3 },
       { name: "First Aid Kit", price: 40, amount: 5 },
-      { name: "Dog II", price: 10, amount: 5 },
+      { name: "Dog", price: 10, amount: 5 },
       { name: "Torch", price: 10, amount: 10 },
       { name: "Shovel", price: 5, amount: 2 },
-      { name: "Donkey II", price: 20, amount: 1 }
+      { name: "Donkey", price: 20, amount: 1 }
     ],
-    activities: ["Holy 3 = FREE Items!", "Holy 1 = 50% off!", "WARNING: Local village permanently hostile!"]
-  },
-  the_dalles: {
-    name: "The Dalles Village Trade Center",
-    items: [
-      { name: "Meat", price: 2, amount: 10 },
-      { name: "Furs", price: 20, amount: 10 }
-    ],
-    activities: []
+    activities: [
+      "Holy 3 = ALL items FREE!",
+      "Holy 1 = 50% off all items!",
+      "Pray for healing (Remove Disease I)",
+      "WARNING: Local native village is permanently hostile!"
+    ]
   }
 };
 
@@ -433,6 +557,7 @@ export const TRADING_POSTS = {
 export const WAGON_PROBLEMS = {
   plains: 10, // 10% chance
   mountains: 20, // 20% chance
+  river: 30, // 30% chance at river crossings
   repairChance: {
     noMechanical: 10,
     mechanical1: 50,
@@ -440,11 +565,11 @@ export const WAGON_PROBLEMS = {
   }
 };
 
-// Skills Reference (expanded)
+// Skills Reference
 export const SKILLS = [
   { id: "animals", name: "Animals", description: "Ride horses, +10% charm hostile animal before combat" },
   { id: "bravery", name: "Bravery", description: "Immune to Fear" },
-  { id: "carry", name: "Carry", description: "+2 carry slots on person (good for wagon breakdown survival)" },
+  { id: "carry", name: "Carry", description: "+2 carry slots on person" },
   { id: "charisma", name: "Charisma", description: "Good for negotiations" },
   { id: "charisma_2", name: "Charisma 2", description: "Difficult negotiations, +1 charm human enemy" },
   { id: "charisma_3", name: "Charisma 3", description: "Heated negotiations, +2 charm human enemies" },
@@ -454,28 +579,28 @@ export const SKILLS = [
   { id: "dark_vision", name: "Dark Vision", description: "Travel through caves without torch" },
   { id: "fishing", name: "Fishing", description: "Can fish, get 2x meat from fishing" },
   { id: "fur_trapper", name: "Fur-Trapper", description: "Double pelts from hunting/fishing" },
-  { id: "herbalist", name: "Herbalist", description: "Detect safe food, gather 2 berries/day guaranteed" },
+  { id: "herbalist", name: "Herbalist", description: "Detect safe food, gather 2 berries/day" },
   { id: "holy", name: "Holy", description: "Revive one player from death once" },
   { id: "holy_3", name: "Holy 3", description: "Revive up to 3x during trip" },
-  { id: "intelligence", name: "Intelligence", description: "Cannot be tricked, various other uses" },
+  { id: "intelligence", name: "Intelligence", description: "Cannot be tricked" },
   { id: "linguist", name: "Linguist", description: "Better results with natives" },
   { id: "luck", name: "Luck", description: "Reroll on critical fails" },
-  { id: "mechanical", name: "Mechanical", description: "Better results operating machines, 50% wagon fix" },
-  { id: "mechanical_3", name: "Mechanical 3", description: "Building and operating machines, 95% wagon fix" },
+  { id: "mechanical", name: "Mechanical", description: "50% wagon fix chance" },
+  { id: "mechanical_3", name: "Mechanical 3", description: "95% wagon fix chance" },
   { id: "medicine_1", name: "Medicine 1", description: "Heal level 1 sicknesses" },
   { id: "medicine_2", name: "Medicine 2", description: "Heal level 1-2 sicknesses" },
   { id: "medicine_3", name: "Medicine 3", description: "Heal level 1-3 sicknesses" },
-  { id: "miner", name: "Miner", description: "Get $50-500 from exploring caves" },
+  { id: "miner", name: "Miner", description: "Get $50-500 from caves" },
   { id: "money_2", name: "Money 2", description: "Buy 20% cheaper, sell 20% higher" },
-  { id: "mountaineering", name: "Mountaineering", description: "No climbing gear needed for mountains" },
-  { id: "painting", name: "Painting", description: "5 canvases, paint scenes for +5 VP each" },
-  { id: "travel", name: "Travel", description: "+1 travel speed (not stackable), cannot get lost" },
-  { id: "trickery", name: "Trickery", description: "Trick people, steal from other human players" },
-  { id: "tough", name: "Tough", description: "Difficult to kill, normal attacks do half damage" },
-  { id: "water", name: "Water", description: "Travel safely over rivers, can fish" },
-  { id: "weapons", name: "Weapons", description: "Use most weapons without injuring yourself" },
-  { id: "writing", name: "Writing", description: "Everyone on team gets +1 level 1 skill" },
-  { id: "writing_2", name: "Writing 2", description: "Everyone on team gets +1 level 1 or 2 skill" }
+  { id: "mountaineering", name: "Mountaineering", description: "No climbing gear needed" },
+  { id: "painting", name: "Painting", description: "Paint scenes for +5 VP each" },
+  { id: "travel", name: "Travel", description: "+1 travel speed, cannot get lost" },
+  { id: "trickery", name: "Trickery", description: "Trick people, steal" },
+  { id: "tough", name: "Tough", description: "Normal attacks do half damage" },
+  { id: "water", name: "Water", description: "Travel safely over rivers" },
+  { id: "weapons", name: "Weapons", description: "Use weapons without injury" },
+  { id: "writing", name: "Writing", description: "Team gets +1 level 1 skill" },
+  { id: "writing_2", name: "Writing 2", description: "Team gets +1 level 1-2 skill" }
 ];
 
 // Tesla Gun results (d10)
