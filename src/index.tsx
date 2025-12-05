@@ -413,14 +413,7 @@ app.get('/game/:id', async (c) => {
                 }`}>{train.status}</span>
               </div>
               
-              <div class="space-y-2 text-sm mb-4">
-                <p><strong>Location:</strong> {TRAIL_STOPS[train.current_location_index]?.name || 'Independence'}</p>
-                <p><strong>Days Traveled:</strong> {train.days_traveled}</p>
-                <p><strong>Cash:</strong> ${train.cash}</p>
-                <p><strong>VP:</strong> {train.vp}</p>
-              </div>
-
-              <div class="flex gap-2">
+              <div class="flex gap-2 mt-2">
                 <select 
                   id={`location-${train.id}`}
                   class="flex-1 px-2 py-1 border rounded text-sm"
