@@ -36,10 +36,10 @@ app.get('/', async (c) => {
   
   return c.render(
     <div class="min-h-screen relative">
-      {/* Background Image */}
+      {/* Background Image - Full visibility */}
       <div 
         class="fixed inset-0 z-0"
-        style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/0d/Emigrants_Crossing_the_Plains%2C_or_The_Oregon_Trail_%28Albert_Bierstadt%29%2C_1869.jpg'); background-size: cover; background-position: center; opacity: 0.15;"
+        style="background-image: url('https://upload.wikimedia.org/wikipedia/commons/0/0d/Emigrants_Crossing_the_Plains%2C_or_The_Oregon_Trail_%28Albert_Bierstadt%29%2C_1869.jpg'); background-size: cover; background-position: center;"
       ></div>
       <div class="relative z-10">
       <header class="wagon-trail text-white py-6 px-8 shadow-lg">
@@ -68,25 +68,25 @@ app.get('/', async (c) => {
       <main class="max-w-7xl mx-auto p-8">
         {/* Quick Actions - Row 1 */}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
-          <a href="/new-game" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-green-600">
+          <a href="/new-game" class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-green-600">
             <div class="flex items-center gap-4">
               <div class="bg-green-100 p-3 rounded-lg"><i class="fas fa-flag-checkered text-green-600 text-xl"></i></div>
               <div><h3 class="font-bold text-gray-800">Start New Game</h3><p class="text-sm text-gray-500">Create a new simulation</p></div>
             </div>
           </a>
-          <a href="/characters" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-blue-600">
+          <a href="/characters" class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-blue-600">
             <div class="flex items-center gap-4">
               <div class="bg-blue-100 p-3 rounded-lg"><i class="fas fa-users text-blue-600 text-xl"></i></div>
               <div><h3 class="font-bold text-gray-800">Character Creator</h3><p class="text-sm text-gray-500">Jobs, nationalities, skills</p></div>
             </div>
           </a>
-          <a href="/store" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-yellow-600">
+          <a href="/store" class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-yellow-600">
             <div class="flex items-center gap-4">
               <div class="bg-yellow-100 p-3 rounded-lg"><i class="fas fa-store text-yellow-600 text-xl"></i></div>
               <div><h3 class="font-bold text-gray-800">Supply Market</h3><p class="text-sm text-gray-500">Independence prices</p></div>
             </div>
           </a>
-          <a href="/dice" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-red-600">
+          <a href="/dice" class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-red-600">
             <div class="flex items-center gap-4">
               <div class="bg-red-100 p-3 rounded-lg"><i class="fas fa-dice text-red-600 text-xl"></i></div>
               <div><h3 class="font-bold text-gray-800">Dice Roller</h3><p class="text-sm text-gray-500">Events, hunting, fishing</p></div>
@@ -96,25 +96,25 @@ app.get('/', async (c) => {
 
         {/* Quick Actions - Row 2 */}
         <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-          <a href="/trading-posts" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-purple-600">
+          <a href="/trading-posts" class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-purple-600">
             <div class="flex items-center gap-4">
               <div class="bg-purple-100 p-3 rounded-lg"><i class="fas fa-campground text-purple-600 text-xl"></i></div>
               <div><h3 class="font-bold text-gray-800">Trading Posts</h3><p class="text-sm text-gray-500">Forts & native villages</p></div>
             </div>
           </a>
-          <a href="/combat" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-red-800">
+          <a href="/combat" class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-red-800">
             <div class="flex items-center gap-4">
               <div class="bg-red-100 p-3 rounded-lg"><i class="fas fa-fist-raised text-red-800 text-xl"></i></div>
               <div><h3 class="font-bold text-gray-800">Battle Simulator</h3><p class="text-sm text-gray-500">Full combat simulation</p></div>
             </div>
           </a>
-          <a href="/travel" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-teal-600">
+          <a href="/travel" class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-teal-600">
             <div class="flex items-center gap-4">
               <div class="bg-teal-100 p-3 rounded-lg"><i class="fas fa-route text-teal-600 text-xl"></i></div>
               <div><h3 class="font-bold text-gray-800">Travel Calculator</h3><p class="text-sm text-gray-500">Distance, time & wagon rolls</p></div>
             </div>
           </a>
-          <a href="/victory" class="bg-white rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-amber-600">
+          <a href="/victory" class="bg-white/80 backdrop-blur-sm rounded-xl p-6 shadow-md card-hover transition cursor-pointer border-l-4 border-amber-600">
             <div class="flex items-center gap-4">
               <div class="bg-amber-100 p-3 rounded-lg"><i class="fas fa-trophy text-amber-600 text-xl"></i></div>
               <div><h3 class="font-bold text-gray-800">Victory Points</h3><p class="text-sm text-gray-500">Calculate final score</p></div>
@@ -123,7 +123,7 @@ app.get('/', async (c) => {
         </div>
 
         {/* Active Games with Wagon Tracking */}
-        <div class="bg-white rounded-xl shadow-md p-6 mb-8">
+        <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6 mb-8">
           <div class="flex items-center justify-between mb-6">
             <h2 class="text-xl font-bold text-gray-800 flex items-center gap-2">
               <i class="fas fa-gamepad text-green-600"></i> Active Classes / Simulations
@@ -170,7 +170,7 @@ app.get('/', async (c) => {
         </div>
 
         {/* Trail Map */}
-        <div class="bg-white rounded-xl shadow-md p-6">
+        <div class="bg-white/80 backdrop-blur-sm rounded-xl shadow-md p-6">
           <h2 class="text-xl font-bold text-gray-800 mb-4 flex items-center gap-2">
             <i class="fas fa-route text-trail-brown"></i> The Oregon Trail
           </h2>
