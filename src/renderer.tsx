@@ -31,7 +31,7 @@ export const renderer = jsxRenderer(({ children, title }) => {
             50% { opacity: 0.7; }
           }
         `}</style>
-        <script>{`
+        <script dangerouslySetInnerHTML={{__html: `
           tailwind.config = {
             theme: {
               extend: {
@@ -45,7 +45,7 @@ export const renderer = jsxRenderer(({ children, title }) => {
               }
             }
           }
-        `}</script>
+        `}} />
       </head>
       <body class="bg-gray-100 min-h-screen relative">
         {/* Oregon Trail Background - All Pages */}

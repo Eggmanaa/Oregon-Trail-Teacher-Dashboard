@@ -145,41 +145,8 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   
   // ============ TRAVEL CALCULATOR ============
-  
-  const calculateTravelBtn = document.getElementById('calculate-travel');
-  if (calculateTravelBtn) {
-    calculateTravelBtn.addEventListener('click', async () => {
-      const fromIndex = parseInt(document.getElementById('travel-from')?.value || 0);
-      const toIndex = parseInt(document.getElementById('travel-to')?.value || 1);
-      const baseSpeed = parseInt(document.getElementById('base-speed')?.value || 15);
-      
-      // Calculate modifiers
-      let modifiers = 0;
-      document.querySelectorAll('.speed-modifier:checked').forEach(el => {
-        modifiers += parseInt(el.dataset.value || 0);
-      });
-      
-      // Get time multiplier
-      const timeMultiplier = parseInt(document.querySelector('input[name="time-mult"]:checked')?.value || 1);
-      
-      try {
-        const response = await fetch('/api/calculate-travel', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ fromIndex, toIndex, baseSpeed, modifiers, timeMultiplier, partySize: 4 })
-        });
-        
-        const result = await response.json();
-        
-        document.getElementById('result-distance').textContent = `${result.distance} mi`;
-        document.getElementById('result-speed').textContent = `${result.speed} mi/day`;
-        document.getElementById('result-days').textContent = `${result.days} days`;
-        document.getElementById('result-food').textContent = `${result.foodNeeded} units`;
-      } catch (error) {
-        alert('Calculation error: ' + error.message);
-      }
-    });
-  }
+  // Note: Travel calculator now uses inline JavaScript in the page
+  // This section is kept for backwards compatibility but no longer active
   
   // ============ VICTORY POINTS ============
   
