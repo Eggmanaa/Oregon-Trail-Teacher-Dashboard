@@ -1588,13 +1588,21 @@ app.get('/travel', (c) => {
           {/* Info box explaining the system */}
           <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
             <h4 class="font-bold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Travel & Food System</h4>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <p class="font-semibold text-blue-800 mb-1">Speed Bonuses:</p>
                 <ul class="text-sm text-blue-700 space-y-1">
                   <li>• <strong>Base Speed:</strong> 1 unit/day</li>
                   <li>• <strong>Travel Skill:</strong> +1 unit/day</li>
                   <li>• <strong>Spare Horse:</strong> +1 unit/day</li>
+                </ul>
+              </div>
+              <div>
+                <p class="font-semibold text-blue-800 mb-1">Terrain Effects:</p>
+                <ul class="text-sm text-blue-700 space-y-1">
+                  <li>• <strong>Plains:</strong> Normal (1x time)</li>
+                  <li>• <strong>Mountains:</strong> 2x travel time</li>
+                  <li>• <strong>River:</strong> 3x travel time</li>
                 </ul>
               </div>
               <div>
@@ -1663,7 +1671,15 @@ app.get('/travel', (c) => {
             </div>
           </div>
           
-          <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Terrain Type</label>
+              <select id="terrain-travel" class="w-full px-4 py-2 border rounded-lg">
+                <option value="plains">Plains (1x time)</option>
+                <option value="mountains">Mountains (2x time)</option>
+                <option value="river">River Crossing (3x time)</option>
+              </select>
+            </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Status Effect</label>
               <select id="status-effect" class="w-full px-4 py-2 border rounded-lg">
@@ -1782,6 +1798,7 @@ app.get('/travel', (c) => {
           const spareHorse = parseInt(document.getElementById('spare-horse').value);
           const partySize = parseInt(document.getElementById('party-size').value);
           const cookingSkill = parseInt(document.getElementById('cooking-skill').value);
+          const terrainType = document.getElementById('terrain-travel').value;
           const statusEffect = document.getElementById('status-effect').value;
           
           // Base speed is always 1, plus bonuses
@@ -1791,7 +1808,7 @@ app.get('/travel', (c) => {
           const res = await fetch('/api/calculate-travel', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fromIndex, toIndex, baseSpeed: totalSpeed, modifiers: 0, statusEffect, partySize, cookingSkill })
+            body: JSON.stringify({ fromIndex, toIndex, baseSpeed: totalSpeed, modifiers: 0, statusEffect, partySize, cookingSkill, terrainType })
           });
           
           const data = await res.json();
@@ -1811,6 +1828,11 @@ app.get('/travel', (c) => {
           if (spareHorse) bonuses.push('Spare Horse (+1)');
           const bonusText = bonuses.length > 0 ? bonuses.join(', ') : 'None';
           
+          let terrainText = 'Plains (1x time)';
+          let terrainMult = 1;
+          if (terrainType === 'mountains') { terrainText = 'Mountains (2x time)'; terrainMult = 2; }
+          else if (terrainType === 'river') { terrainText = 'River (3x time)'; terrainMult = 3; }
+          
           let cookingText = 'None (1x food)';
           if (cookingSkill === 1) cookingText = 'Cooking 1 (½ food)';
           else if (cookingSkill === 2) cookingText = 'Cooking 2 (⅓ food)';
@@ -1823,11 +1845,13 @@ app.get('/travel', (c) => {
           const baseFoodNeeded = data.actualDays * partySize;
           
           breakdownText.innerHTML = '<strong>Speed Bonuses:</strong> ' + bonusText + 
+            '<br><strong>Terrain:</strong> ' + terrainText +
             '<br><strong>Cooking Skill:</strong> ' + cookingText +
             '<br><strong>Status Effect:</strong> ' + statusText +
-            '<br><strong>Travel Calc:</strong> ' + data.baseDays + ' base days ÷ ' + totalSpeed + ' speed = ' + 
-            Math.ceil(data.baseDays / totalSpeed) + ' days' +
-            (statusEffect !== 'normal' ? ' → adjusted to ' + data.actualDays + ' days' : '') +
+            '<br><strong>Travel Calc:</strong> ' + data.baseDays + ' base days ÷ ' + totalSpeed + ' speed' +
+            (terrainMult > 1 ? ' × ' + terrainMult + ' terrain' : '') +
+            (statusEffect !== 'normal' ? ' × status' : '') +
+            ' = ' + data.actualDays + ' days' +
             '<br><strong>Food Calc:</strong> ' + data.actualDays + ' days × ' + partySize + ' people = ' + baseFoodNeeded + ' base food' +
             (cookingSkill > 0 ? ' → ' + data.foodNeeded + ' with cooking' : '');
         }

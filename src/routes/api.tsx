@@ -267,7 +267,7 @@ api.get('/wagon-trains/:id/characters', async (c) => {
 // Calculate travel - uses gamified travel days from PowerPoint, not miles
 api.post('/calculate-travel', async (c) => {
   const body = await c.req.json()
-  const { fromIndex, toIndex, baseSpeed, modifiers, statusEffect, partySize, cookingSkill } = body
+  const { fromIndex, toIndex, baseSpeed, modifiers, statusEffect, partySize, cookingSkill, terrainType } = body
   
   // Sum up the daysFromPrev for each stop in the range (gamified travel days)
   let totalBaseDays = 0
@@ -279,7 +279,18 @@ api.post('/calculate-travel', async (c) => {
   const speed = Math.max(1, baseSpeed + (modifiers || 0))
   
   // Higher speed reduces travel days
-  const adjustedDays = Math.ceil(totalBaseDays / speed)
+  let adjustedDays = Math.ceil(totalBaseDays / speed)
+  
+  // Apply terrain multiplier
+  // Plains: 1x (no effect), Mountains: 2x, River: 3x
+  let terrainMultiplier = 1
+  if (terrainType === 'mountains') {
+    terrainMultiplier = 2
+    adjustedDays = adjustedDays * 2
+  } else if (terrainType === 'river') {
+    terrainMultiplier = 3
+    adjustedDays = adjustedDays * 3
+  }
   
   // Apply status effect multipliers
   let actualDays = adjustedDays
@@ -305,6 +316,8 @@ api.post('/calculate-travel', async (c) => {
   return c.json({
     baseDays: totalBaseDays,
     speed,
+    terrainMultiplier,
+    terrainType: terrainType || 'plains',
     adjustedDays,
     actualDays,
     foodNeeded,
