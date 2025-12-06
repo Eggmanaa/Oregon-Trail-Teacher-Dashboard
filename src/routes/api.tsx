@@ -267,7 +267,7 @@ api.get('/wagon-trains/:id/characters', async (c) => {
 // Calculate travel - uses gamified travel days from PowerPoint, not miles
 api.post('/calculate-travel', async (c) => {
   const body = await c.req.json()
-  const { fromIndex, toIndex, baseSpeed, modifiers, statusEffect, partySize } = body
+  const { fromIndex, toIndex, baseSpeed, modifiers, statusEffect, partySize, cookingSkill } = body
   
   // Sum up the daysFromPrev for each stop in the range (gamified travel days)
   let totalBaseDays = 0
@@ -289,7 +289,18 @@ api.post('/calculate-travel', async (c) => {
     actualDays = adjustedDays * 3 // Divide speed by 3 = 3x time
   }
   
-  const foodNeeded = actualDays * (partySize || 4)
+  // Calculate food needed based on cooking skill
+  // Cooking 0: 1 food/person/day
+  // Cooking 1: 1/2 food/person/day
+  // Cooking 2: 1/3 food/person/day
+  let baseFoodNeeded = actualDays * (partySize || 4)
+  let foodNeeded = baseFoodNeeded
+  
+  if (cookingSkill === 1) {
+    foodNeeded = Math.ceil(baseFoodNeeded / 2) // Half food consumption
+  } else if (cookingSkill === 2) {
+    foodNeeded = Math.ceil(baseFoodNeeded / 3) // Third food consumption
+  }
   
   return c.json({
     baseDays: totalBaseDays,
@@ -297,6 +308,8 @@ api.post('/calculate-travel', async (c) => {
     adjustedDays,
     actualDays,
     foodNeeded,
+    baseFoodNeeded,
+    cookingSkill: cookingSkill || 0,
     statusEffect
   })
 })

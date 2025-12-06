@@ -1587,13 +1587,25 @@ app.get('/travel', (c) => {
           
           {/* Info box explaining the system */}
           <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-            <h4 class="font-bold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Travel Speed System</h4>
-            <ul class="text-sm text-blue-700 space-y-1">
-              <li>• <strong>Base Speed:</strong> 1 unit/day (everyone starts with this)</li>
-              <li>• <strong>Travel Skill:</strong> +1 unit/day</li>
-              <li>• <strong>Spare Horse:</strong> +1 unit/day</li>
-              <li>• Higher speed = fewer days to travel = less food consumed!</li>
-            </ul>
+            <h4 class="font-bold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Travel & Food System</h4>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <p class="font-semibold text-blue-800 mb-1">Speed Bonuses:</p>
+                <ul class="text-sm text-blue-700 space-y-1">
+                  <li>• <strong>Base Speed:</strong> 1 unit/day</li>
+                  <li>• <strong>Travel Skill:</strong> +1 unit/day</li>
+                  <li>• <strong>Spare Horse:</strong> +1 unit/day</li>
+                </ul>
+              </div>
+              <div>
+                <p class="font-semibold text-blue-800 mb-1">Food Consumption:</p>
+                <ul class="text-sm text-blue-700 space-y-1">
+                  <li>• <strong>No Cooking:</strong> 1 food/person/day</li>
+                  <li>• <strong>Cooking 1:</strong> ½ food/person/day</li>
+                  <li>• <strong>Cooking 2:</strong> ⅓ food/person/day</li>
+                </ul>
+              </div>
+            </div>
           </div>
           
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
@@ -1615,7 +1627,7 @@ app.get('/travel', (c) => {
             </div>
           </div>
 
-          <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
+          <div class="grid grid-cols-2 md:grid-cols-5 gap-4 mb-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Base Speed</label>
               <div class="w-full px-4 py-2 border rounded-lg text-center font-bold bg-gray-100">1</div>
@@ -1640,6 +1652,14 @@ app.get('/travel', (c) => {
               <input type="number" id="party-size" value="4" min="1" max="20"
                 class="w-full px-4 py-2 border rounded-lg text-center font-bold" />
               <span class="text-xs text-gray-500">for food calc</span>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Cooking Skill</label>
+              <select id="cooking-skill" class="w-full px-4 py-2 border rounded-lg text-center font-bold">
+                <option value="0">None (1x food)</option>
+                <option value="1">Cooking 1 (½ food)</option>
+                <option value="2">Cooking 2 (⅓ food)</option>
+              </select>
             </div>
           </div>
           
@@ -1761,6 +1781,7 @@ app.get('/travel', (c) => {
           const travelSkill = parseInt(document.getElementById('travel-skill').value);
           const spareHorse = parseInt(document.getElementById('spare-horse').value);
           const partySize = parseInt(document.getElementById('party-size').value);
+          const cookingSkill = parseInt(document.getElementById('cooking-skill').value);
           const statusEffect = document.getElementById('status-effect').value;
           
           // Base speed is always 1, plus bonuses
@@ -1770,7 +1791,7 @@ app.get('/travel', (c) => {
           const res = await fetch('/api/calculate-travel', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fromIndex, toIndex, baseSpeed: totalSpeed, modifiers: 0, statusEffect, partySize })
+            body: JSON.stringify({ fromIndex, toIndex, baseSpeed: totalSpeed, modifiers: 0, statusEffect, partySize, cookingSkill })
           });
           
           const data = await res.json();
@@ -1790,15 +1811,25 @@ app.get('/travel', (c) => {
           if (spareHorse) bonuses.push('Spare Horse (+1)');
           const bonusText = bonuses.length > 0 ? bonuses.join(', ') : 'None';
           
+          let cookingText = 'None (1x food)';
+          if (cookingSkill === 1) cookingText = 'Cooking 1 (½ food)';
+          else if (cookingSkill === 2) cookingText = 'Cooking 2 (⅓ food)';
+          
           let statusText = statusEffect === 'normal' ? 'None' : statusEffect.charAt(0).toUpperCase() + statusEffect.slice(1);
           if (statusEffect === 'happy') statusText += ' (2x faster)';
           else if (statusEffect !== 'normal') statusText += ' (3x slower)';
           
+          // Calculate base food for comparison
+          const baseFoodNeeded = data.actualDays * partySize;
+          
           breakdownText.innerHTML = '<strong>Speed Bonuses:</strong> ' + bonusText + 
+            '<br><strong>Cooking Skill:</strong> ' + cookingText +
             '<br><strong>Status Effect:</strong> ' + statusText +
-            '<br><strong>Calculation:</strong> ' + data.baseDays + ' base days ÷ ' + totalSpeed + ' speed = ' + 
+            '<br><strong>Travel Calc:</strong> ' + data.baseDays + ' base days ÷ ' + totalSpeed + ' speed = ' + 
             Math.ceil(data.baseDays / totalSpeed) + ' days' +
-            (statusEffect !== 'normal' ? ' → adjusted to ' + data.actualDays + ' days' : '');
+            (statusEffect !== 'normal' ? ' → adjusted to ' + data.actualDays + ' days' : '') +
+            '<br><strong>Food Calc:</strong> ' + data.actualDays + ' days × ' + partySize + ' people = ' + baseFoodNeeded + ' base food' +
+            (cookingSkill > 0 ? ' → ' + data.foodNeeded + ' with cooking' : '');
         }
       `}} />
     </div>,
