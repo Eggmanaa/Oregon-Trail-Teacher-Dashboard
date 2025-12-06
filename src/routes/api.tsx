@@ -264,33 +264,37 @@ api.get('/wagon-trains/:id/characters', async (c) => {
   }
 })
 
-// Calculate travel
+// Calculate travel - uses gamified travel days from PowerPoint, not miles
 api.post('/calculate-travel', async (c) => {
   const body = await c.req.json()
   const { fromIndex, toIndex, baseSpeed, modifiers, statusEffect, partySize } = body
   
-  let totalDistance = 0
+  // Sum up the daysFromPrev for each stop in the range (gamified travel days)
+  let totalBaseDays = 0
   for (let i = fromIndex + 1; i <= toIndex; i++) {
-    totalDistance += TRAIL_STOPS[i].distance
+    totalBaseDays += TRAIL_STOPS[i].daysFromPrev
   }
   
-  const adjustedSpeed = Math.max(1, baseSpeed + (modifiers || 0))
-  const baseDays = Math.ceil(totalDistance / adjustedSpeed)
+  // Speed: base 1 + travel skill (+1) + spare horse (+1) = max 3
+  const speed = Math.max(1, baseSpeed + (modifiers || 0))
   
-  // Apply status effect multipliers (corrected)
-  let actualDays = baseDays
+  // Higher speed reduces travel days
+  const adjustedDays = Math.ceil(totalBaseDays / speed)
+  
+  // Apply status effect multipliers
+  let actualDays = adjustedDays
   if (statusEffect === 'happy') {
-    actualDays = Math.ceil(baseDays / 2) // 2x faster = half the time
+    actualDays = Math.ceil(adjustedDays / 2) // 2x faster = half the time
   } else if (statusEffect === 'depressed' || statusEffect === 'fear' || statusEffect === 'angry') {
-    actualDays = baseDays * 3 // Divide speed by 3 = 3x time
+    actualDays = adjustedDays * 3 // Divide speed by 3 = 3x time
   }
   
   const foodNeeded = actualDays * (partySize || 4)
   
   return c.json({
-    distance: totalDistance,
-    speed: adjustedSpeed,
-    baseDays,
+    baseDays: totalBaseDays,
+    speed,
+    adjustedDays,
     actualDays,
     foodNeeded,
     statusEffect

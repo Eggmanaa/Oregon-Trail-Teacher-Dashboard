@@ -1585,6 +1585,17 @@ app.get('/travel', (c) => {
         <div class="bg-white rounded-xl shadow-lg p-6 mb-8">
           <h2 class="text-xl font-bold text-gray-800 mb-6">Calculate Travel Time</h2>
           
+          {/* Info box explaining the system */}
+          <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+            <h4 class="font-bold text-blue-800 mb-2"><i class="fas fa-info-circle mr-2"></i>Travel Speed System</h4>
+            <ul class="text-sm text-blue-700 space-y-1">
+              <li>• <strong>Base Speed:</strong> 1 unit/day (everyone starts with this)</li>
+              <li>• <strong>Travel Skill:</strong> +1 unit/day</li>
+              <li>• <strong>Spare Horse:</strong> +1 unit/day</li>
+              <li>• Higher speed = fewer days to travel = less food consumed!</li>
+            </ul>
+          </div>
+          
           <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">From:</label>
@@ -1607,21 +1618,32 @@ app.get('/travel', (c) => {
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 mb-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Base Speed</label>
-              <input type="number" id="base-speed" value="15" min="1" max="30"
-                class="w-full px-4 py-2 border rounded-lg text-center font-bold" />
-              <span class="text-xs text-gray-500">miles/day</span>
+              <div class="w-full px-4 py-2 border rounded-lg text-center font-bold bg-gray-100">1</div>
+              <span class="text-xs text-gray-500">unit/day (fixed)</span>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Travel Skill</label>
+              <select id="travel-skill" class="w-full px-4 py-2 border rounded-lg text-center font-bold">
+                <option value="0">No (+0)</option>
+                <option value="1">Yes (+1)</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-2">Spare Horse</label>
+              <select id="spare-horse" class="w-full px-4 py-2 border rounded-lg text-center font-bold">
+                <option value="0">No (+0)</option>
+                <option value="1">Yes (+1)</option>
+              </select>
             </div>
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Party Size</label>
               <input type="number" id="party-size" value="4" min="1" max="20"
                 class="w-full px-4 py-2 border rounded-lg text-center font-bold" />
+              <span class="text-xs text-gray-500">for food calc</span>
             </div>
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-2">Speed Modifier</label>
-              <input type="number" id="speed-mod" value="0" min="-10" max="10"
-                class="w-full px-4 py-2 border rounded-lg text-center font-bold" />
-              <span class="text-xs text-gray-500">+Horse/Travel skill</span>
-            </div>
+          </div>
+          
+          <div class="grid grid-cols-1 md:grid-cols-1 gap-4 mb-6">
             <div>
               <label class="block text-sm font-medium text-gray-700 mb-2">Status Effect</label>
               <select id="status-effect" class="w-full px-4 py-2 border rounded-lg">
@@ -1644,21 +1666,24 @@ app.get('/travel', (c) => {
           <h2 class="text-xl font-bold text-gray-800 mb-4">Travel Results</h2>
           <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
             <div class="bg-blue-50 p-4 rounded-lg">
-              <p class="text-sm text-gray-600">Distance</p>
-              <p id="result-distance" class="text-2xl font-bold text-blue-600">-- mi</p>
+              <p class="text-sm text-gray-600">Base Days</p>
+              <p id="result-base-days" class="text-2xl font-bold text-blue-600">--</p>
             </div>
             <div class="bg-green-50 p-4 rounded-lg">
-              <p class="text-sm text-gray-600">Adj. Speed</p>
-              <p id="result-speed" class="text-2xl font-bold text-green-600">-- mi/day</p>
+              <p class="text-sm text-gray-600">Your Speed</p>
+              <p id="result-speed" class="text-2xl font-bold text-green-600">-- unit/day</p>
             </div>
             <div class="bg-yellow-50 p-4 rounded-lg">
-              <p class="text-sm text-gray-600">Travel Days</p>
+              <p class="text-sm text-gray-600">Actual Days</p>
               <p id="result-days" class="text-2xl font-bold text-yellow-600">--</p>
             </div>
             <div class="bg-red-50 p-4 rounded-lg">
               <p class="text-sm text-gray-600">Food Needed</p>
               <p id="result-food" class="text-2xl font-bold text-red-600">-- units</p>
             </div>
+          </div>
+          <div id="result-breakdown" class="mt-4 p-4 bg-gray-50 rounded-lg hidden">
+            <p class="text-sm text-gray-600" id="breakdown-text"></p>
           </div>
         </div>
       </main>
@@ -1733,23 +1758,47 @@ app.get('/travel', (c) => {
         async function calculateTravel() {
           const fromIndex = parseInt(document.getElementById('travel-from').value);
           const toIndex = parseInt(document.getElementById('travel-to').value);
-          const baseSpeed = parseInt(document.getElementById('base-speed').value);
-          const modifiers = parseInt(document.getElementById('speed-mod').value);
+          const travelSkill = parseInt(document.getElementById('travel-skill').value);
+          const spareHorse = parseInt(document.getElementById('spare-horse').value);
           const partySize = parseInt(document.getElementById('party-size').value);
           const statusEffect = document.getElementById('status-effect').value;
+          
+          // Base speed is always 1, plus bonuses
+          const baseSpeed = 1;
+          const totalSpeed = baseSpeed + travelSkill + spareHorse;
           
           const res = await fetch('/api/calculate-travel', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ fromIndex, toIndex, baseSpeed, modifiers, statusEffect, partySize })
+            body: JSON.stringify({ fromIndex, toIndex, baseSpeed: totalSpeed, modifiers: 0, statusEffect, partySize })
           });
           
           const data = await res.json();
           
-          document.getElementById('result-distance').textContent = data.distance + ' mi';
-          document.getElementById('result-speed').textContent = data.speed + ' mi/day';
+          document.getElementById('result-base-days').textContent = data.baseDays + ' days';
+          document.getElementById('result-speed').textContent = totalSpeed + ' unit/day';
           document.getElementById('result-days').textContent = data.actualDays + ' days';
           document.getElementById('result-food').textContent = data.foodNeeded + ' units';
+          
+          // Show breakdown
+          const breakdownDiv = document.getElementById('result-breakdown');
+          const breakdownText = document.getElementById('breakdown-text');
+          breakdownDiv.classList.remove('hidden');
+          
+          let bonuses = [];
+          if (travelSkill) bonuses.push('Travel Skill (+1)');
+          if (spareHorse) bonuses.push('Spare Horse (+1)');
+          const bonusText = bonuses.length > 0 ? bonuses.join(', ') : 'None';
+          
+          let statusText = statusEffect === 'normal' ? 'None' : statusEffect.charAt(0).toUpperCase() + statusEffect.slice(1);
+          if (statusEffect === 'happy') statusText += ' (2x faster)';
+          else if (statusEffect !== 'normal') statusText += ' (3x slower)';
+          
+          breakdownText.innerHTML = '<strong>Speed Bonuses:</strong> ' + bonusText + 
+            '<br><strong>Status Effect:</strong> ' + statusText +
+            '<br><strong>Calculation:</strong> ' + data.baseDays + ' base days ÷ ' + totalSpeed + ' speed = ' + 
+            Math.ceil(data.baseDays / totalSpeed) + ' days' +
+            (statusEffect !== 'normal' ? ' → adjusted to ' + data.actualDays + ' days' : '');
         }
       `}} />
     </div>,
