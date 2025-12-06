@@ -1030,7 +1030,8 @@ export const NATIVE_ENEMIES = [
 
 // Victory Points
 export const VP_REWARDS = {
-  reachOregon: 500,
+  reachOregon: 0,  // No VP just for arriving
+  daysGonePenalty: 1,  // -1 VP per day gone on journey
   wealthPer10: 1,
   survivingSpouse: 100,
   survivingChild: 50,

@@ -1875,12 +1875,12 @@ app.get('/victory', (c) => {
       <main class="max-w-4xl mx-auto p-8">
         <div class="bg-white rounded-xl shadow-lg p-6">
           <div class="mb-8">
-            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Base Points</h3>
-            <label class="flex items-center gap-3 p-3 bg-green-50 rounded-lg">
-              <input type="checkbox" id="reached-oregon" class="w-5 h-5" />
-              <span class="font-medium">Reached Oregon City</span>
-              <span class="ml-auto font-bold text-green-600">+{VP_REWARDS.reachOregon} VP</span>
-            </label>
+            <h3 class="text-lg font-bold text-gray-800 mb-4 border-b pb-2">Journey Time Penalty</h3>
+            <div class="p-4 bg-red-50 rounded-lg">
+              <label class="block text-sm font-medium text-gray-700 mb-2">Days Gone on Journey</label>
+              <input type="number" id="days-gone" value="0" min="0" class="w-full px-4 py-2 border rounded-lg text-center text-xl" />
+              <p class="text-xs text-red-600 mt-1 text-center font-medium">-{VP_REWARDS.daysGonePenalty} VP per day</p>
+            </div>
           </div>
 
           <div class="mb-8">
@@ -1955,7 +1955,7 @@ app.get('/victory', (c) => {
       <script dangerouslySetInnerHTML={{__html: `
         async function calculateVP() {
           const data = {
-            reachedOregon: document.getElementById('reached-oregon').checked,
+            daysGone: parseInt(document.getElementById('days-gone').value) || 0,
             survivingSpouses: parseInt(document.getElementById('surviving-spouses').value) || 0,
             survivingChildren: parseInt(document.getElementById('surviving-children').value) || 0,
             totalWealth: parseInt(document.getElementById('total-wealth').value) || 0,

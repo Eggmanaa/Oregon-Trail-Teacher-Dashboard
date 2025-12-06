@@ -677,12 +677,21 @@ api.post('/calculate-vp', async (c) => {
   const body = await c.req.json()
   let total = 0
   
-  if (body.reachedOregon) total += VP_REWARDS.reachOregon
+  // Days gone penalty: -1 VP per day
+  const daysGone = body.daysGone || 0
+  total -= daysGone * VP_REWARDS.daysGonePenalty
+  
+  // Survivors
   total += (body.survivingSpouses || 0) * VP_REWARDS.survivingSpouse
   total += (body.survivingChildren || 0) * VP_REWARDS.survivingChild
+  
+  // Wealth
   total += Math.floor((body.totalWealth || 0) / 10) * VP_REWARDS.wealthPer10
+  
+  // Paintings
   total += (body.paintings || 0) * VP_REWARDS.paintingPer
   
+  // Discoveries
   if (body.vikingRune) total += VP_REWARDS.vikingRune
   if (body.indianMummy) total += VP_REWARDS.indianMummy
   if (body.sasquatch) total += VP_REWARDS.sasquatch
@@ -692,9 +701,10 @@ api.post('/calculate-vp', async (c) => {
   if (body.fountainOfYouth) total += VP_REWARDS.fountainOfYouth
   if (body.convertTribe) total += VP_REWARDS.convertTribe
   
+  // Elder Statesman doubles everything
   if (body.elderStatesman) total *= VP_REWARDS.elderStatesmanMultiplier
   
-  return c.json({ total })
+  return c.json({ total, daysGonePenalty: daysGone * VP_REWARDS.daysGonePenalty })
 })
 
 export default api
