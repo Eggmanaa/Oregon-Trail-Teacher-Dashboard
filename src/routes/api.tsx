@@ -398,12 +398,61 @@ api.post('/simulate-combat', async (c) => {
     
     if (aliveParty.length === 0 || aliveEnemies.length === 0) break
     
+    // Gatling Gun effect at start of party turn (damages all enemies)
+    const gatlingUsers = aliveParty.filter((m: any) => m.hasGatling)
+    if (gatlingUsers.length > 0) {
+      for (const gunner of gatlingUsers) {
+        battleLog.push(`🔫 ${gunner.name}'s Gatling Gun fires at all enemies!`)
+        for (const e of enemyForces.filter((e: any) => e.currentHp > 0)) {
+          const actualDamage = e.abilities?.includes('Tough') ? 1 : 1
+          e.currentHp -= actualDamage
+          battleLog.push(`  ${e.name} takes 1 damage from Gatling Gun! (${e.currentHp}hp left)`)
+          if (e.currentHp <= 0) {
+            gunner.killCount++
+            gunner.damageDealt += 1
+            battleLog.push(`  ${e.name} is defeated!`)
+          }
+        }
+      }
+    }
+    
     // Party attacks
     for (const member of aliveParty) {
       if (enemyForces.filter((e: any) => e.currentHp > 0).length === 0) break
       
+      // Skip Gatling users (they already attacked all enemies)
+      if (member.hasGatling) continue
+      
+      // Check for Medicine skill - heal instead of attack
+      const medicineLevel = member.abilities?.find((a: string) => a.startsWith('medicine'))
+      if (medicineLevel) {
+        const healAmount = medicineLevel === 'medicine1' ? 1 : medicineLevel === 'medicine2' ? 2 : 3
+        // Find injured ally to heal
+        const injuredAllies = aliveParty.filter((p: any) => p.currentHp > 0 && p.currentHp < p.maxHp)
+        if (injuredAllies.length > 0) {
+          const patient = injuredAllies[0]
+          const oldHp = patient.currentHp
+          patient.currentHp = Math.min(patient.maxHp, patient.currentHp + healAmount)
+          const healed = patient.currentHp - oldHp
+          battleLog.push(`💊 ${member.name} uses ${medicineLevel.replace('medicine', 'Medicine ')} to heal ${patient.name} for ${healed} HP! (${patient.currentHp}/${patient.maxHp}hp)`)
+          continue
+        } else {
+          battleLog.push(`💊 ${member.name} has Medicine but no one needs healing.`)
+        }
+      }
+      
       const target = enemyForces.find((e: any) => e.currentHp > 0)
       if (!target) break
+      
+      // Check if using Cannon (1-hit kill)
+      if (member.hasCannon) {
+        battleLog.push(`💣 ${member.name} fires the Cannon at ${target.name}!`)
+        target.currentHp = 0
+        member.killCount++
+        member.damageDealt += target.hp
+        battleLog.push(`  💥 BOOM! ${target.name} is obliterated!`)
+        continue
+      }
       
       // Check if using Tesla Gun
       if (member.hasTesla) {

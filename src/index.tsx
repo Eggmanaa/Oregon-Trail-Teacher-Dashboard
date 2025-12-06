@@ -1212,6 +1212,9 @@ app.get('/combat', (c) => {
                   <option value="1" data-weapon="pistol">Pistol (1 dmg)</option>
                   <option value="2" data-weapon="rifle" selected>Rifle (2 dmg)</option>
                   <option value="3" data-weapon="shotgun">Shotgun (3 dmg)</option>
+                  <option value="5" data-weapon="elephant_gun">🐘 Elephant Gun (5 dmg)</option>
+                  <option value="999" data-weapon="cannon">💣 Cannon (1-hit kill)</option>
+                  <option value="0" data-weapon="gatling">🔫 Gatling Gun (1 dmg to ALL enemies/turn)</option>
                   <option value="0" data-weapon="tesla">⚡ Tesla Gun (d10 special)</option>
                 </select>
                 <select id="party-traits" class="px-3 py-2 bg-white border border-gray-300 rounded text-gray-800">
@@ -1221,6 +1224,9 @@ app.get('/combat', (c) => {
                   <option value="weapons">Weapons skill (+1 dmg)</option>
                   <option value="lucky">Lucky (reroll misses)</option>
                   <option value="famous_inventor">Famous Inventor (Tesla immunity)</option>
+                  <option value="medicine1">💊 Medicine 1 (heal 1 HP instead of attack)</option>
+                  <option value="medicine2">💊 Medicine 2 (heal 2 HP instead of attack)</option>
+                  <option value="medicine3">💊 Medicine 3 (heal 3 HP instead of attack)</option>
                 </select>
               </div>
               <button onclick="addPartyMember()" class="w-full bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded">
@@ -1347,7 +1353,11 @@ app.get('/combat', (c) => {
           const list = document.getElementById('party-list');
           list.innerHTML = party.map((p, i) => {
             const traits = p.traits ? ' [' + p.traits + ']' : '';
-            const weapon = p.hasTesla ? '⚡Tesla' : 'Dmg:' + p.damage;
+            let weapon = 'Dmg:' + p.damage;
+            if (p.hasTesla) weapon = '⚡Tesla';
+            else if (p.hasCannon) weapon = '💣Cannon (1-hit kill)';
+            else if (p.hasGatling) weapon = '🔫Gatling (1 to all)';
+            else if (p.damage === 5) weapon = '🐘Elephant Gun (5 dmg)';
             const isNative = p.isNativeAlly ? '🪶 ' : '';
             const bgClass = p.isNativeAlly ? 'bg-amber-100 border border-amber-300' : 'bg-blue-100 border border-blue-300';
             return '<div class="flex items-center justify-between ' + bgClass + ' p-2 rounded">' +
@@ -1380,6 +1390,8 @@ app.get('/combat', (c) => {
             hp, 
             damage,
             hasTesla: weaponType === 'tesla',
+            hasCannon: weaponType === 'cannon',
+            hasGatling: weaponType === 'gatling',
             traits: traits || null,
             abilities: traits ? [traits] : []
           };

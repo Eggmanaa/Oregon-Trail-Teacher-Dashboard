@@ -774,7 +774,6 @@ export const TRADING_POSTS = {
     ],
     activities: [
       "Commander's Wife wants chocolates (Pay $50 per chocolate!)",
-      "Female company (10% better bartering per day)",
       "Rodeo (Animals skill: Win $50!)",
       "Hire Ulrich Zwingli (Swiss Mountaineer: $150)"
     ]
